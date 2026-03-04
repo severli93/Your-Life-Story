@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
+import ShareModal, { type ShareCardData } from "@/components/ShareModal";
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -197,6 +198,7 @@ export default function BabyGrowthStory() {
   const [current, setCurrent] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playPct, setPlayPct] = useState(0);
+  const [showShare, setShowShare] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
@@ -497,7 +499,48 @@ export default function BabyGrowthStory() {
         >
           记录宝宝的故事
         </Link>
+
+        {/* 分享按钮 */}
+        <button
+          onClick={() => setShowShare(true)}
+          style={{
+            background: "rgba(255,255,255,0.88)",
+            border: "none",
+            borderRadius: 28,
+            padding: "11px 18px",
+            fontFamily: "var(--font-nunito, Nunito, sans-serif)",
+            fontSize: 13,
+            fontWeight: 700,
+            color: "#C4603A",
+            cursor: "pointer",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            boxShadow: "0 2px 16px rgba(0,0,0,0.1)",
+            transition: "transform 0.15s",
+          }}
+        >
+          ✦ 分享
+        </button>
       </div>
+
+      {/* Share modal */}
+      {showShare && (
+        <ShareModal
+          data={{
+            title: "小棠的第一千天",
+            subtitle: "第 1 天 → 第 1095 天",
+            emotionLabel: "喜悦",
+            emotionColor: "#FFB5A7",
+            stats: [
+              { value: "1095", label: "天记录" },
+              { value: "10", label: "个里程碑" },
+            ],
+            tagline: "每一个瞬间，都值得被铭记",
+            quote: "妈妈，我爱你",
+          } satisfies ShareCardData}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </div>
   );
 }

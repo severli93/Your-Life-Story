@@ -353,15 +353,16 @@ export default function Home() {
 
 
       {/* ── SAMPLES ───────────────────────────────────── */}
-      <section id="samples" style={{ background: "var(--color-midnight)", padding: "100px 32px" }}>
+      {/* 始终保持暗色背景：样例卡片是史诗感/暖调设计，不跟随页面主题切换 */}
+      <section id="samples" style={{ background: "#08080E", padding: "100px 32px" }}>
         <Reveal style={{ textAlign: "center", maxWidth: 560, margin: "0 auto 56px" }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: 14 }}>
             真实样例
           </div>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(28px, 5vw, 44px)", color: "var(--color-text-main)", marginBottom: 14 }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(28px, 5vw, 44px)", color: "#EDE8E0", marginBottom: 14 }}>
             看看别人的人生长河
           </h2>
-          <p style={{ fontSize: 15, color: "var(--color-text-soft)" }}>每个人的故事，都有完全不同的样子。</p>
+          <p style={{ fontSize: 15, color: "#A09888" }}>每个人的故事，都有完全不同的样子。</p>
         </Reveal>
 
         <div style={{
@@ -395,9 +396,9 @@ export default function Home() {
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--color-gold)", border: "1px solid rgba(212,168,83,.15)", borderRadius: 20, padding: "5px 12px", display: "inline-block", marginBottom: 28 }}>
                 完整人生
               </div>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: 34, color: "var(--color-text-main)", marginBottom: 4 }}>高延清</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: 34, color: "#EDE8E0", marginBottom: 4 }}>高延清</div>
               <div style={{ fontStyle: "italic", fontSize: 13, color: "var(--color-gold)", opacity: 0.7, marginBottom: 12 }}>1933 — 2024</div>
-              <div style={{ fontSize: 12, color: "var(--color-text-soft)", letterSpacing: "0.08em", marginBottom: 20 }}>军人 · 诗人 · 父亲</div>
+              <div style={{ fontSize: 12, color: "#A09888", letterSpacing: "0.08em", marginBottom: 20 }}>军人 · 诗人 · 父亲</div>
               <div style={{ fontSize: 14, lineHeight: 1.75, color: "rgba(237,232,224,.5)", borderLeft: "2px solid rgba(212,168,83,.3)", paddingLeft: 14, fontStyle: "italic", marginBottom: 24 }}>
                 「时光荏苒，岁月如歌。回首往事，我所珍视的，是那些平凡而真实的瞬间。」
               </div>
@@ -494,7 +495,7 @@ export default function Home() {
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#80AAFF", border: "1px solid rgba(100,160,255,.15)", borderRadius: 20, padding: "5px 12px", display: "inline-block", marginBottom: 28 }}>
                 年度报告
               </div>
-              <div style={{ fontFamily: "var(--font-nunito)", fontSize: 28, fontWeight: 800, color: "var(--color-text-main)", marginBottom: 6, letterSpacing: "-0.02em" }}>2025 年度报告</div>
+              <div style={{ fontFamily: "var(--font-nunito)", fontSize: 28, fontWeight: 800, color: "#EDE8E0", marginBottom: 6, letterSpacing: "-0.02em" }}>2025 年度报告</div>
               <div style={{ fontSize: 12, color: "rgba(128,170,255,.6)", marginBottom: 20 }}>像 Spotify Wrapped，但是你的人生</div>
               {/* Mini bar chart */}
               <div style={{ display: "flex", alignItems: "flex-end", gap: 5, height: 52, marginBottom: 20 }}>
@@ -557,12 +558,13 @@ export default function Home() {
 
 
       {/* ── STORY TYPES ───────────────────────────────── */}
-      <section style={{ background: "var(--color-deep)", padding: "100px 32px", borderTop: "1px solid rgba(212,168,83,.06)" }}>
+      {/* 始终保持暗色背景，与 #samples 连成一体的暗色展示区 */}
+      <section style={{ background: "#0D0D18", padding: "100px 32px", borderTop: "1px solid rgba(212,168,83,.06)" }}>
         <Reveal style={{ textAlign: "center", maxWidth: 540, margin: "0 auto 56px" }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-gold)", marginBottom: 14 }}>
             故事类型
           </div>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(28px, 5vw, 44px)", color: "var(--color-text-main)" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(28px, 5vw, 44px)", color: "#EDE8E0" }}>
             选择你的记录方式
           </h2>
         </Reveal>
@@ -591,8 +593,8 @@ export default function Home() {
                   <div style={{ width: 48, height: 48, borderRadius: 14, background: t.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
                     {t.icon}
                   </div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 18, color: "var(--color-text-main)" }}>{t.title}</div>
-                  <p style={{ fontSize: 13, color: "var(--color-text-soft)", lineHeight: 1.65, margin: 0 }}>{t.desc}</p>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: 18, color: "#EDE8E0" }}>{t.title}</div>
+                  <p style={{ fontSize: 13, color: "#A09888", lineHeight: 1.65, margin: 0 }}>{t.desc}</p>
                   <div style={{ marginTop: "auto", fontSize: 18, color: "#4A4A6A", transition: "color .2s" }}>→</div>
                 </div>
               </Link>
