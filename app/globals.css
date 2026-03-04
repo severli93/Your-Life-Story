@@ -1,26 +1,131 @@
 @import "tailwindcss";
 
+@theme {
+  --color-midnight: #08080E;
+  --color-deep: #0E0E1C;
+  --color-surface: #13131F;
+  --color-surface2: #1C1C2C;
+  --color-gold: #D4A853;
+  --color-gold-lt: #ECC56A;
+  --color-gold-pale: #EDD89A;
+  --color-blush: #E8C4B8;
+  --color-silver: #B8C8D8;
+  --color-text-main: #EDE8E0;
+  --color-text-soft: #A09888;
+  --color-text-dim: #50506A;
+  --color-border-main: rgba(212,168,83,.14);
+  --color-glass: rgba(255,255,255,.035);
+
+  --font-display: var(--font-playfair);
+  --font-narrative: var(--font-garamond);
+  --font-ui: var(--font-nunito);
+  --font-dmsans: var(--font-dmsans);
+}
+
+/* ── Theme CSS variables ───────────────────────────── */
+
+/* Light (default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ease-out: cubic-bezier(.25,.46,.45,.94);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+
+  --page-bg: #F9F7F4;
+  --page-text: #1E1A16;
+
+  --nav-bg: rgba(253,252,249,.92);
+  --nav-border: rgba(44,36,32,.1);
+  --nav-text: #2C2420;
+  --nav-text-dim: #8B8075;
+  --nav-link-hover: #D4A574;
+  --nav-pill-bg: #2C2420;
+  --nav-pill-text: #FDFCF9;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Light (default) — also override Tailwind @theme palette */
+:root, [data-theme="light"] {
+  --color-midnight: #FAF8F4;
+  --color-deep:     #F3F0E8;
+  --color-surface:  #EDE9DF;
+  --color-surface2: #E4DFD3;
+  --color-text-main: #1E1A16;
+  --color-text-soft: #5A5048;
+  --color-text-dim:  #8B8075;
+  --color-border-main: rgba(44,36,32,.1);
+  --color-glass: rgba(255,255,255,.65);
+
+  --nav-pill-bg: rgba(212,168,83,.13);
+  --nav-pill-text: #6B5030;
+  --nav-pill-border: rgba(212,168,83,.4);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Dark override */
+[data-theme="dark"] {
+  --page-bg: #08080E;
+  --page-text: #EDE8E0;
+
+  --color-midnight: #08080E;
+  --color-deep:     #0E0E1C;
+  --color-surface:  #13131F;
+  --color-surface2: #1C1C2C;
+  --color-text-main: #EDE8E0;
+  --color-text-soft: #A09888;
+  --color-text-dim:  #50506A;
+  --color-border-main: rgba(212,168,83,.14);
+  --color-glass: rgba(255,255,255,.035);
+
+  --nav-bg: rgba(8,8,14,.6);
+  --nav-border: rgba(255,255,255,.05);
+  --nav-text: #EDE8E0;
+  --nav-text-dim: #50506A;
+  --nav-link-hover: #D4A853;
+  --nav-pill-bg: rgba(212,168,83,.18);
+  --nav-pill-text: #ECC56A;
+  --nav-pill-border: rgba(212,168,83,.5);
+}
+
+html { scroll-behavior: smooth; }
+
+@keyframes pulseBar {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.15); }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes spinScale {
+  0%   { transform: rotate(0deg)   scale(1); }
+  25%  { transform: rotate(90deg)  scale(1.18); }
+  50%  { transform: rotate(180deg) scale(1); }
+  75%  { transform: rotate(270deg) scale(1.18); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page-bg);
+  color: var(--page-text);
+  font-family: var(--font-ui), sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  transition: background .3s, color .3s;
+}
+
+/* Dark body */
+[data-theme="dark"] body {
+  background: #08080E;
+  color: #EDE8E0;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: .028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px;
 }
