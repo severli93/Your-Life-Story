@@ -173,13 +173,16 @@ ssh -i "/Users/mulan/Downloads/轻量云 SSH 密钥.pem" ubuntu@43.160.238.189
 cd ~/YourLifeStory
 git pull origin main
 
-# 3. 安装新依赖（如 package.json 有变化）
+# 3. 加载 nvm（非交互式 SSH 必须）
+source ~/.nvm/nvm.sh
+
+# 4. 安装新依赖（如 package.json 有变化）
 npm install
 
-# 4. 重新构建
+# 5. 重新构建
 npm run build
 
-# 5. 重启服务
+# 6. 重启服务
 pm2 restart your-life-story
 
 # 6. 验证
@@ -190,8 +193,9 @@ curl http://localhost:3000
 ### 快捷一键部署（无 package.json 变化时）
 
 ```bash
+# ⚠️ 服务器 Node.js 通过 nvm 安装，非交互式 SSH 需显式 source nvm.sh
 ssh -i "/Users/mulan/Downloads/轻量云 SSH 密钥.pem" ubuntu@43.160.238.189 \
-  "cd ~/YourLifeStory && git pull origin main && npm run build && pm2 restart your-life-story"
+  "source ~/.nvm/nvm.sh && cd ~/YourLifeStory && git pull origin main && npm run build && pm2 restart your-life-story"
 ```
 
 ### 同步图片资源（sample_data 未入 Git）
