@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生命长河 · YourLifeStory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600;700&family=Ma+Shan+Zheng&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --color-paper: #FDFCF9;
+      --color-paper-warm: #F9F6F0;
+      --color-parchment: #F5F0E8;
+      --color-ink: #2C2420;
+      --color-ink-light: #5A5048;
+      --color-ink-muted: #8B8075;
+      --color-accent: #D4A574;
+      --color-accent-soft: #E8D5C4;
+      --emotion-calm: #A8D5BA;
+      --emotion-joy: #FFB5C2;
+      --emotion-anxiety: #FFD4A3;
+      --emotion-tired: #C9B8E8;
+      --emotion-sad: #A3C4E8;
+      --emotion-excited: #D4E8A3;
+      --font-hand: 'Caveat', 'Ma Shan Zheng', cursive;
+      --font-serif: 'Playfair Display', 'Noto Serif SC', serif;
+      --font-body: 'Nunito', 'Noto Sans SC', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --radius-hand: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    }
+
+    [data-theme="dark"] {
+      --color-paper: #1A1816;
+      --color-paper-warm: #252220;
+      --color-parchment: #2D2A26;
+      --color-ink: #F5F0E8;
+      --color-ink-light: #C9C0B6;
+      --color-ink-muted: #8B8075;
+      --color-accent: #E8C9A8;
+      --color-accent-soft: #5A5048;
+      --emotion-calm: #7DB89A;
+      --emotion-joy: #E89AAF;
+      --emotion-anxiety: #E8B896;
+      --emotion-tired: #B8A8D8;
+      --emotion-sad: #8AB4E8;
+      --emotion-excited: #B8D88A;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-paper);
+      color: var(--color-ink);
+      line-height: 1.6;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    /* 纸质纹理 */
+    .paper-texture::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      mix-blend-mode: multiply;
+    }
+
+    [data-theme="dark"] .paper-texture::before { opacity: 0.05; mix-blend-mode: screen; }
+
+    /* 手绘按钮 */
+    .btn-hand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--color-paper-warm);
+      border: 2px solid var(--color-ink);
+      border-radius: var(--radius-hand);
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 2px 3px 0 rgba(44, 36, 32, 0.1);
+    }
+    .btn-hand:hover { transform: translateY(-2px) rotate(-1deg); box-shadow: 3px 5px 0 rgba(44, 36, 32, 0.15); background: var(--color-accent-soft); }
+    [data-theme="dark"] .btn-hand { box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.3); }
+    .btn-primary { background: var(--color-accent); color: var(--color-paper); border-color: var(--color-accent); }
+    .btn-primary:hover { background: #C49464; }
+
+    /* 情绪圆点 - Dear Data 核心 */
+    .emotion-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--color-ink);
+      box-shadow: 1px 2px 0 rgba(0,0,0,0.1);
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      cursor: pointer;
+      display: inline-block;
+    }
+    .emotion-dot:hover { transform: scale(1.4) rotate(10deg); }
+    .emotion-dot.calm { background: var(--emotion-calm); }
+    .emotion-dot.joy { background: var(--emotion-joy); }
+    .emotion-dot.anxiety { background: var(--emotion-anxiety); }
+    .emotion-dot.tired { background: var(--emotion-tired); }
+    .emotion-dot.sad { background: var(--emotion-sad); }
+    .emotion-dot.excited { background: var(--emotion-excited); }
+
+    /* 胶带标签 */
+    .washi-tape {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(212, 165, 116, 0.25);
+      transform: rotate(-1.5deg);
+      font-family: var(--font-hand);
+      font-size: 16px;
+      color: var(--color-ink-light);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* 导航 */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: linear-gradient(to bottom, var(--color-paper) 0%, transparent 100%);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--color-ink); font-family: var(--font-serif); font-size: 20px; }
+    .logo-mark { width: 36px; height: 36px; border: 2px solid var(--color-ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .theme-toggle { width: 40px; height: 40px; border: 1.5px solid var(--color-ink-light); border-radius: 50%; background: transparent; cursor: pointer; font-size: 18px; transition: all 0.2s; }
+    .theme-toggle:hover { border-color: var(--color-accent); transform: rotate(15deg); }
+
+    /* ═══════════════════════════════════════════════════════════
+       首页 - Hero
+       ═══════════════════════════════════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 120px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .memory-fragments { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .fragment {
+      position: absolute;
+      padding: 12px 20px;
+      background: var(--color-paper-warm);
+      border: 1px solid rgba(44, 36, 32, 0.1);
+      border-radius: 12px;
+      font-family: var(--font-hand);
+      font-size: 15px;
+      color: var(--color-ink-light);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      animation: float 8s ease-in-out infinite;
+    }
+    [data-theme="dark"] .fragment { background: var(--color-parchment); opacity: 0.8; color: var(--color-ink-light); }
+    .fragment:nth-child(1) { top: 15%; left: 8%; transform: rotate(-4deg); animation-delay: 0s; }
+    .fragment:nth-child(2) { top: 25%; right: 10%; transform: rotate(3deg); animation-delay: -2s; opacity: 0.7; }
+    .fragment:nth-child(3) { top: 65%; left: 5%; transform: rotate(2deg); animation-delay: -4s; opacity: 0.6; }
+    .fragment:nth-child(4) { top: 70%; right: 8%; transform: rotate(-3deg); animation-delay: -1s; opacity: 0.8; }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+      50% { transform: translateY(-15px) rotate(calc(var(--r, 0deg) + 2deg)); }
+    }
+
+    .hero-content { position: relative; z-index: 10; text-align: center; max-width: 720px; }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after { content: ''; width: 30px; height: 1px; background: var(--color-accent); opacity: 0.4; }
+    
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(56px, 10vw, 96px);
+      line-height: 1.1;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .hero-title::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: repeating-linear-gradient(90deg, var(--color-accent) 0px, var(--color-accent) 8px, transparent 8px, transparent 12px);
+      border-radius: 2px;
+    }
+    
+    .hero-subtitle { font-size: clamp(16px, 2.5vw, 20px); color: var(--color-ink-light); line-height: 1.8; margin-bottom: 48px; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* How it Works */
+    .section-how { padding: 100px 40px; background: var(--color-parchment); position: relative; }
+    [data-theme="dark"] .section-how { background: var(--color-paper-warm); }
+    .section-header { text-align: center; max-width: 560px; margin: 0 auto 64px; }
+    .section-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(32px, 5vw, 48px); margin-bottom: 16px; }
+    .section-desc { color: var(--color-ink-light); font-size: 17px; line-height: 1.7; }
+    
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; max-width: 1000px; margin: 0 auto; }
+    .step-card { text-align: center; padding: 48px 32px; background: var(--color-paper); border-radius: 24px; border: 1px solid rgba(44, 36, 32, 0.06); box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+    .step-number { width: 64px; height: 64px; margin: 0 auto 24px; border: 2px solid var(--color-ink); border-radius: var(--radius-hand); display: flex; align-items: center; justify-content: center; font-family: var(--font-hand); font-size: 28px; color: var(--color-accent); position: relative; background: var(--color-paper); }
+    .step-number::after { content: attr(data-step); position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: var(--color-accent); color: var(--color-paper); border-radius: 50%; font-family: var(--font-body); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .step-icon { font-size: 40px; margin-bottom: 16px; }
+    .step-title { font-family: var(--font-serif); font-size: 24px; margin-bottom: 8px; }
+    .step-label { font-family: var(--font-hand); font-size: 18px; color: var(--color-accent); margin-bottom: 12px; }
+    .step-desc { color: var(--color-ink-light); font-size: 15px; line-height: 1.7; }
+
+    /* Samples */
+    .section-samples { padding: 100px 40px; }
+    .samples-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+    .sample-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      text-decoration: none;
+      color: var(--color-ink);
+      transition: transform 0.4s ease;
+      border: 1px solid rgba(44, 36, 32, 0.1);
+    }
+    .sample-card:hover { transform: translateY(-8px); }
+    .sample-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%); z-index: 1; }
+    .sample-card > * { position: relative; z-index: 2; color: white; }
+    .sample-card.elder { background: linear-gradient(160deg, #3D3229 0%, #1A1816 100%); }
+    .sample-card.baby { background: linear-gradient(160deg, #FFF4F0 0%, #FFE8E0 100%); }
+    .sample-card.baby > * { color: var(--color-ink); }
+    .sample-card.baby::before { background: linear-gradient(to top, rgba(255,255,255,0.9) 0%, transparent 60%); }
+    
+    .sample-tag { display: inline-block; padding: 6px 14px; border: 1px solid currentColor; border-radius: 20px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; opacity: 0.8; width: fit-content; }
+    .sample-title { font-family: var(--font-serif); font-size: 32px; margin-bottom: 8px; }
+    .sample-meta { font-family: var(--font-hand); font-size: 16px; opacity: 0.9; margin-bottom: 12px; }
+    .sample-quote { font-size: 14px; line-height: 1.7; opacity: 0.8; font-style: italic; border-left: 2px solid var(--color-accent); padding-left: 16px; }
+
+    /* ═══════════════════════════════════════════════════════════
+       Companion Page - 桌面端应用界面
+       ═══════════════════════════════════════════════════════════ */
+    .companion-page { height: 100vh; overflow: hidden; display: grid; grid-template-columns: 400px 1fr; }
+    
+    /* 左侧边栏 - 长河对话 */
+    .companion-sidebar {
+      background: var(--color-parchment);
+      border-right: 1px solid rgba(44, 36, 32, 0.08);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    [data-theme="dark"] .companion-sidebar { background: var(--color-paper-warm); }
+    
+    .sidebar-header {
+      padding: 24px;
+      border-bottom: 1px solid rgba(44, 36, 32, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--color-accent), #E8A87C); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2px solid var(--color-paper); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .avatar-info h3 { font-family: var(--font-serif); font-size: 18px; margin-bottom: 2px; }
+    .avatar-info p { font-size: 13px; color: var(--color-ink-muted); }
+    .status-dot { width: 8px; height: 8px; background: #7DB89A; border-radius: 50%; display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    
+    .chat-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .message { display: flex; gap: 12px; max-width: 85%; }
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+    .message-bubble { 
+      padding: 14px 18px; 
+      border-radius: 18px; 
+      font-size: 14px; 
+      line-height: 1.6; 
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .message.assistant .message-bubble { background: var(--color-paper); border: 1px solid rgba(44, 36, 32, 0.08); border-bottom-left-radius: 4px; color: var(--color-ink); }
+    .message.user .message-bubble { background: var(--color-accent); color: white; border-bottom-right-radius: 4px; }
+    
+    .quick-prompts { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 24px 16px; }
+    .prompt-chip { 
+      padding: 8px 16px; 
+      background: transparent; 
+      border: 1.5px dashed var(--color-ink-muted); 
+      border-radius: 20px; 
+      font-size: 13px; 
+      color: var(--color-ink-light); 
+      cursor: pointer; 
+      transition: all 0.2s;
+      font-family: var(--font-body);
+    }
+    .prompt-chip:hover { border-style: solid; border-color: var(--color-accent); color: var(--color-accent); transform: translateY(-1px); }
+    
+    .chat-input-area { padding: 20px 24px; border-top: 1px solid rgba(44, 36, 32, 0.06); }
+    .input-wrapper { 
+      display: flex; 
+      align-items: flex-end; 
+      gap: 12px; 
+      background: var(--color-paper); 
+      border: 2px solid rgba(44, 36, 32, 0.1); 
+      border-radius: 24px; 
+      padding: 12px 16px;
+      transition: border-color 0.2s;
+    }
+    .input-wrapper:focus-within { border-color: var(--color-accent); }
+    .chat-input { flex: 1; border: none; background: transparent; outline: none; font-family: var(--font-body); font-size: 15px; color: var(--color-ink); resize: none; max-height: 120px; }
+    .send-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--color-accent); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+    .send-btn:hover { transform: scale(1.1); }
+
+    /* 右侧数据可视化区 - Dear Data 风格 */
+    .companion-main { 
+      background: var(--color-paper); 
+      overflow-y: auto; 
+      padding: 32px;
+      position: relative;
+    }
+    
+    .dashboard-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 32px; 
+      padding-bottom: 20px;
+      border-bottom: 1px dashed rgba(44, 36, 32, 0.15);
+    }
+    .dashboard-title { font-family: var(--font-serif); font-size: 28px; }
+    .date-display { font-family: var(--font-hand); font-size: 18px; color: var(--color-ink-muted); }
+    
+    /* 情绪图表网格 */
+    .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 1200px; }
+    
+    .chart-card { 
+      background: var(--color-paper-warm); 
+      border-radius: 20px; 
+      padding: 24px; 
+      border: 1px solid rgba(44, 36, 32, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .chart-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: repeating-linear-gradient(90deg, var(--color-accent) 0px, var(--color-accent) 20px, transparent 20px, transparent 30px);
+      opacity: 0.3;
+    }
+    
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .chart-title { font-family: var(--font-hand); font-size: 20px; color: var(--color-ink-light); }
+    .chart-value { font-family: var(--font-mono); font-size: 24px; font-weight: 600; color: var(--color-accent); }
+    
+    /* Dear Data 情绪日历 - 点阵图 */
+    .emotion-calendar { display: grid; grid-template-columns: repeat(13, 1fr); gap: 8px; }
+    .calendar-cell { 
+      aspect-ratio: 1; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      position: relative;
+    }
+    .calendar-cell .emotion-dot { width: 10px; height: 10px; border-width: 1.5px; }
+    
+    /* 周节律柱状图 - 手绘风格 */
+    .week-rhythm { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; gap: 12px; }
+    .rhythm-bar { 
+      flex: 1; 
+      background: var(--emotion-calm); 
+      border-radius: 4px 4px 0 0; 
+      border: 2px solid var(--color-ink);
+      border-bottom: none;
+      position: relative;
+      transition: all 0.3s ease;
+      opacity: 0.8;
+    }
+    .rhythm-bar:hover { opacity: 1; transform: scaleY(1.05); }
+    .rhythm-bar::after {
+      content: attr(data-day);
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-hand);
+      font-size: 12px;
+      color: var(--color-ink-muted);
+    }
+    
+    /* 月度趋势线 - SVG 手绘风格 */
+    .trend-svg { width: 100%; height: 150px; }
+    .trend-line { fill: none; stroke: var(--color-accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .trend-area { fill: url(#trendGradient); opacity: 0.2; }
+    .trend-dot { fill: var(--color-paper); stroke: var(--color-accent); stroke-width: 2; }
+    
+    /* 情绪构成圆环 */
+    .donut-chart { width: 140px; height: 140px; position: relative; }
+    .donut-center { 
+      position: absolute; 
+      inset: 0; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center;
+      font-family: var(--font-hand);
+    }
+    .donut-value { font-size: 28px; color: var(--color-accent); }
+    .donut-label { font-size: 14px; color: var(--color-ink-muted); }
+    
+    /* 情绪词云 - 气泡 */
+    .emotion-bubbles { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; padding: 20px; }
+    .emotion-bubble { 
+      padding: 8px 16px; 
+      border-radius: 20px; 
+      border: 2px solid var(--color-ink);
+      font-family: var(--font-hand);
+      font-size: 14px;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      cursor: default;
+    }
+    .emotion-bubble:hover { transform: translateY(-2px) rotate(-2deg); }
+    
+    /* 统计卡片 */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-item { 
+      text-align: center; 
+      padding: 20px; 
+      background: var(--color-paper-warm); 
+      border-radius: 16px;
+      border: 1px solid rgba(44, 36, 32, 0.06);
+      position: relative;
+    }
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 6px;
+      height: 6px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+    .stat-value { font-family: var(--font-serif); font-size: 32px; color: var(--color-accent); margin-bottom: 4px; }
+    .stat-label { font-size: 12px; color: var(--color-ink-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ═══════════════════════════════════════════════════════════
+       Share Page - 故事分享页
+       ═══════════════════════════════════════════════════════════ */
+    .share-page { background: var(--color-parchment); min-height: 100vh; }
+    [data-theme="dark"] .share-page { background: var(--color-paper); }
+    
+    .share-container { max-width: 800px; margin: 0 auto; padding: 60px 40px; }
+    
+    .share-header { text-align: center; margin-bottom: 60px; position: relative; }
+    .share-badge { 
+      display: inline-block; 
+      padding: 8px 20px; 
+      background: var(--color-paper); 
+      border: 2px solid var(--color-ink);
+      border-radius: var(--radius-hand);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      transform: rotate(-2deg);
+    }
+    .share-title { font-family: var(--font-serif); font-size: clamp(40px, 8vw, 64px); margin-bottom: 16px; }
+    .share-subtitle { font-family: var(--font-hand); font-size: 24px; color: var(--color-ink-muted); }
+    
+    /* 时间轴 - 手绘风格 */
+    .timeline { position: relative; padding: 40px 0; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 100%;
+      background: repeating-linear-gradient(to bottom, var(--color-ink-muted) 0px, var(--color-ink-muted) 8px, transparent 8px, transparent 16px);
+      opacity: 0.3;
+    }
+    
+    .timeline-item { 
+      display: grid; 
+      grid-template-columns: 1fr 60px 1fr; 
+      gap: 40px; 
+      margin-bottom: 60px; 
+      align-items: center;
+    }
+    .timeline-item:nth-child(even) .timeline-content { grid-column: 3; text-align: left; }
+    .timeline-item:nth-child(even) .timeline-date { grid-column: 1; text-align: right; }
+    .timeline-item:nth-child(even) .timeline-dot { grid-column: 2; }
+    
+    .timeline-dot { 
+      width: 20px; 
+      height: 20px; 
+      background: var(--color-paper); 
+      border: 3px solid var(--color-accent); 
+      border-radius: 50%; 
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 0 4px var(--color-parchment);
+    }
+    [data-theme="dark"] .timeline-dot { box-shadow: 0 0 0 4px var(--color-paper); }
+    
+    .timeline-date { font-family: var(--font-hand); font-size: 18px; color: var(--color-ink-muted); }
+    .timeline-content { background: var(--color-paper); padding: 24px; border-radius: 16px; border: 1px solid rgba(44, 36, 32, 0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.04); position: relative; }
+    .timeline-content::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 20px;
+      width: 40px;
+      height: 4px;
+      background: var(--emotion-joy);
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+    .timeline-title { font-family: var(--font-serif); font-size: 20px; margin-bottom: 8px; }
+    .timeline-desc { color: var(--color-ink-light); font-size: 15px; line-height: 1.7; margin-bottom: 12px; }
+    .timeline-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .timeline-tag { font-family: var(--font-hand); font-size: 14px; color: var(--color-accent); }
+    
+    .share-footer { text-align: center; margin-top: 80px; padding-top: 40px; border-top: 1px dashed rgba(44, 36, 32, 0.2); }
+    .share-actions { display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; }
+    
+    /* 响应式 */
+    @media (max-width: 900px) {
+      .companion-page { grid-template-columns: 1fr; }
+      .companion-sidebar { position: fixed; bottom: 0; left: 0; right: 0; height: 60vh; z-index: 100; transform: translateY(100%); transition: transform 0.3s; }
+      .companion-sidebar.open { transform: translateY(0); }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .timeline-item { grid-template-columns: 40px 1fr; gap: 20px; }
+      .timeline-item:nth-child(even) .timeline-content,
+      .timeline-item:nth-child(even) .timeline-date { grid-column: 2; text-align: left; }
+      .timeline::before { left: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 导航 -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-mark">🌊</div>
+    <span>生命长河</span>
+  </a>
+  <div style="display: flex; align-items: center; gap: 24px;">
+    <a href="#companion" class="nav-link active">长河</a>
+    <a href="#share" class="nav-link">故事</a>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+   首页内容（默认显示）
+   ═══════════════════════════════════════════════════════════ -->
+<div id="home" class="page-content">
+  <section class="hero paper-texture">
+    <div class="memory-fragments">
+      <div class="fragment">第 1 天 ♡ 来到这个世界</div>
+      <div class="fragment">情绪温度 8/10 · 比较焦虑</div>
+      <div class="fragment">2024年11月 · 47个记忆节点</div>
+      <div class="fragment">第一次说「我爱你」</div>
+    </div>
+    
+    <div class="hero-content">
+      <div class="hero-eyebrow">AI 生命记录伴侣</div>
+      <h1 class="hero-title">
+        生命长河
+        <span class="handwritten" style="display: block; font-size: 0.4em; color: var(--color-accent); margin-top: 12px;">Your Life Story</span>
+      </h1>
+      <p class="hero-subtitle">
+        有些时刻，值得被好好记录。<br>
+        长河陪你<strong>对话、沉淀</strong>，将散落的记忆，织成一部只属于你的<strong>人生可视化</strong>。
+      </p>
+      <div class="hero-actions">
+        <a href="#companion" class="btn-hand btn-primary">开始对话 ✦</a>
+        <a href="#share" class="btn-hand">查看样例</a>
+      </div>
+    </div>
+    
+    <div class="scroll-hint">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
+      </svg>
+      向下探索
+    </div>
+  </section>
+
+  <section class="section-how paper-texture">
+    <div class="section-header">
+      <div class="section-label">How it Works</div>
+      <h2 class="section-title">对话，沉淀，可视化</h2>
+      <p class="section-desc">三个步骤，将日常的碎片，凝聚成完整的人生叙事。</p>
+    </div>
+    
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number" data-step="1">💬</div>
+        <div class="step-label">对话</div>
+        <h3 class="step-title">长河陪伴</h3>
+        <p class="step-desc">像跟老朋友聊天一样，说说今天的心情。长河用 A·I·R 方法引导你觉察感受。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number" data-step="2">🌊</div>
+        <div class="step-label">沉淀</div>
+        <h3 class="step-title">记忆成型</h3>
+        <p class="step-desc">每次对话自动提炼为带时间戳的记忆节点。照片和日记，也可以一键导入。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number" data-step="3">✨</div>
+        <div class="step-label">可视化</div>
+        <h3 class="step-title">生成长河</h3>
+        <p class="step-desc">积累的记忆，在你准备好时，生成一部可浏览、可分享的人生故事页。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-samples paper-texture">
+    <div class="section-header">
+      <div class="section-label">Real Stories</div>
+      <h2 class="section-title">看看别人的人生长河</h2>
+    </div>
+    
+    <div class="samples-grid">
+      <a href="#" class="sample-card elder">
+        <span class="washi-tape" style="position: absolute; top: 20px; right: 20px; background: rgba(212, 165, 116, 0.3);">完整人生</span>
+        <div class="sample-tag">军人 · 诗人 · 父亲</div>
+        <h3 class="sample-title">高延清</h3>
+        <div class="sample-meta">1933 — 2024</div>
+        <p class="sample-quote">「时光荏苒，岁月如歌。回首往事，我所珍视的，是那些平凡而真实的瞬间。」</p>
+      </a>
+      
+      <a href="#" class="sample-card baby">
+        <span class="washi-tape" style="position: absolute; top: 20px; right: 20px; background: rgba(255, 181, 194, 0.3);">婴儿成长</span>
+        <div class="sample-tag" style="border-color: var(--color-ink-light); color: var(--color-ink-light);">0-3岁</div>
+        <h3 class="sample-title" style="color: var(--color-ink);">小棠的第一千天</h3>
+        <div class="sample-meta" style="color: var(--color-ink-muted);">第 1 天 → 第 1095 天</div>
+        <p class="sample-quote" style="color: var(--color-ink-light); border-color: var(--emotion-joy);">记录第一次微笑、第一步、第一句话...</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="section-cta paper-texture">
+    <div class="cta-content">
+      <div class="section-label">Start Your Journey</div>
+      <h2 class="cta-title">记录属于你的<br>生命长河</h2>
+      <p class="cta-desc">每段生命都值得被好好记录。游客身份即可体验全部功能，随时开始。</p>
+      <div style="display: flex; gap: 16px; justify-content: center;">
+        <a href="#companion" class="btn-hand btn-primary">立即开始对话</a>
+        <a href="#" class="btn-hand">直接上传素材生成</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+   Companion 页面（桌面端应用界面）
+   ═══════════════════════════════════════════════════════════ -->
+<div id="companion" class="page-content" style="display: none;">
+  <div class="companion-page">
+    <!-- 左侧对话栏 -->
+    <aside class="companion-sidebar">
+      <div class="sidebar-header">
+        <div class="avatar">🌊</div>
+        <div class="avatar-info">
+          <h3>长河</h3>
+          <p><span class="status-dot"></span>在线</p>
+        </div>
+      </div>
+      
+      <div class="chat-container">
+        <div class="message assistant">
+          <div class="avatar" style="width: 32px; height: 32px; font-size: 16px; flex-shrink: 0;">🌊</div>
+          <div class="message-bubble">
+            你好，我是长河。<br><br>今天，过得怎么样？
+          </div>
+        </div>
+        
+        <div class="message user">
+          <div class="message-bubble">今天有点累，工作上的事不太顺利</div>
+        </div>
+        
+        <div class="message assistant">
+          <div class="avatar" style="width: 32px; height: 32px; font-size: 16px; flex-shrink: 0;">🌊</div>
+          <div class="message-bubble">
+            累了。<br><br>是身体上的那种，还是心里也一起累了？
+          </div>
+        </div>
+      </div>
+      
+      <div class="quick-prompts">
+        <button class="prompt-chip">今天有点累…</button>
+        <button class="prompt-chip">有件事放不下</button>
+        <button class="prompt-chip">我想记录一下</button>
+      </div>
+      
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <textarea class="chat-input" rows="1" placeholder="此刻的心情……"></textarea>
+          <button class="send-btn">→</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 右侧数据可视化 -->
+    <main class="companion-main paper-texture">
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">情绪图表</h1>
+          <div class="date-display">记录第 90 天 · 2024年3月</div>
+        </div>
+        <div class="washi-tape">📊 数据来自对话</div>
+      </div>
+      
+      <!-- 统计行 -->
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-value">6.7</div>
+          <div class="stat-label">平均温度</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">平静</div>
+          <div class="stat-label">主导情绪</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">14</div>
+          <div class="stat-label">平静/喜悦天</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">90</div>
+          <div class="stat-label">连续记录</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- 情绪日历 - Dear Data 点阵 -->
+        <div class="chart-card" style="grid-column: span 2;">
+          <div class="chart-header">
+            <span class="chart-title">情绪日历 · 过去 91 天</span>
+            <span class="mono-data" style="color: var(--color-ink-muted);">每个圆点代表一天</span>
+          </div>
+          <div class="emotion-calendar" id="calendar">
+            <!-- 由 JS 生成 -->
+          </div>
+          <div style="margin-top: 20px; display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-ink-muted);">
+              <span class="emotion-dot calm" style="width: 10px; height: 10px;"></span> 平静
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-ink-muted);">
+              <span class="emotion-dot joy" style="width: 10px; height: 10px;"></span> 喜悦
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-ink-muted);">
+              <span class="emotion-dot anxiety" style="width: 10px; height: 10px;"></span> 焦虑
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-ink-muted);">
+              <span class="emotion-dot tired" style="width: 10px; height: 10px;"></span> 疲惫
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-ink-muted);">
+              <span class="emotion-dot sad" style="width: 10px; height: 10px;"></span> 失落
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-ink-muted);">
+              <span class="emotion-dot excited" style="width: 10px; height: 10px;"></span> 兴奋
+            </div>
+          </div>
+        </div>
+
+        <!-- 本周节律 -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">本周节律</span>
+          </div>
+          <div class="week-rhythm">
+            <div class="rhythm-bar" style="height: 60%; background: var(--emotion-joy);" data-day="一"></div>
+            <div class="rhythm-bar" style="height: 40%; background: var(--emotion-calm);" data-day="二"></div>
+            <div class="rhythm-bar" style="height: 80%; background: var(--emotion-anxiety);" data-day="三"></div>
+            <div class="rhythm-bar" style="height: 50%; background: var(--emotion-tired);" data-day="四"></div>
+            <div class="rhythm-bar" style="height: 90%; background: var(--emotion-excited);" data-day="五"></div>
+            <div class="rhythm-bar" style="height: 70%; background: var(--emotion-joy);" data-day="六"></div>
+            <div class="rhythm-bar" style="height: 45%; background: var(--emotion-calm);" data-day="日"></div>
+          </div>
+        </div>
+
+        <!-- 情绪构成 -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">情绪构成</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 24px;">
+            <div class="donut-chart">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--emotion-calm)" stroke-width="20" stroke-dasharray="113 377" transform="rotate(-90 70 70)"/>
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--emotion-joy)" stroke-width="20" stroke-dasharray="75 377" stroke-dashoffset="-113" transform="rotate(-90 70 70)"/>
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--emotion-anxiety)" stroke-width="20" stroke-dasharray="56 377" stroke-dashoffset="-188" transform="rotate(-90 70 70)"/>
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--emotion-tired)" stroke-width="20" stroke-dasharray="56 377" stroke-dashoffset="-244" transform="rotate(-90 70 70)"/>
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--emotion-sad)" stroke-width="20" stroke-dasharray="37 377" stroke-dashoffset="-300" transform="rotate(-90 70 70)"/>
+              </svg>
+              <div class="donut-center">
+                <div class="donut-value">31%</div>
+                <div class="donut-label">平静</div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <span class="emotion-dot calm" style="width: 8px; height: 8px;"></span>
+                <span style="color: var(--color-ink-light);">平静 31%</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <span class="emotion-dot joy" style="width: 8px; height: 8px;"></span>
+                <span style="color: var(--color-ink-light);">喜悦 21%</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <span class="emotion-dot anxiety" style="width: 8px; height: 8px;"></span>
+                <span style="color: var(--color-ink-light);">焦虑 19%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 情绪词云 -->
+        <div class="chart-card" style="grid-column: span 2;">
+          <div class="chart-header">
+            <span class="chart-title">情绪频次云</span>
+          </div>
+          <div class="emotion-bubbles">
+            <span class="emotion-bubble" style="background: var(--emotion-calm); font-size: 20px; transform: rotate(-2deg);">平静</span>
+            <span class="emotion-bubble" style="background: var(--emotion-joy); font-size: 16px; transform: rotate(1deg);">喜悦</span>
+            <span class="emotion-bubble" style="background: var(--emotion-anxiety); font-size: 18px; transform: rotate(-1deg);">焦虑</span>
+            <span class="emotion-bubble" style="background: var(--emotion-tired); font-size: 14px; transform: rotate(2deg);">疲惫</span>
+            <span class="emotion-bubble" style="background: var(--emotion-sad); font-size: 12px; transform: rotate(-3deg);">失落</span>
+            <span class="emotion-bubble" style="background: var(--emotion-excited); font-size: 17px; transform: rotate(1deg);">兴奋</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+   Share Page - 故事分享页
+   ═══════════════════════════════════════════════════════════ -->
+<div id="share" class="page-content share-page" style="display: none;">
+  <div class="share-container">
+    <header class="share-header">
+      <div class="share-badge">生命长河 · Life Story</div>
+      <h1 class="share-title">高延清的人生长河</h1>
+      <p class="share-subtitle">1933 — 2024 · 军人 · 诗人 · 父亲</p>
+    </header>
+
+    <div class="timeline paper-texture">
+      <div class="timeline-item">
+        <div class="timeline-date">1933年<br><span class="handwritten">第 1 天</span></div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">来到这个世界</div>
+          <div class="timeline-desc">出生于山东济南的一个普通家庭。那是动荡的年代，但母亲的怀抱很温暖。</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">#初生</span>
+            <span class="timeline-tag">#济南</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">1951年<br><span class="handwritten">第 6570 天</span></div>
+        <div class="timeline-dot" style="border-color: var(--emotion-excited);"></div>
+        <div class="timeline-content" style="--accent: var(--emotion-excited);">
+          <div class="timeline-title">参军入朝</div>
+          <div class="timeline-desc">十八岁，报名参军。跨过鸭绿江的那天晚上，月光很亮。军功章 No.349711。</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">#青春</span>
+            <span class="timeline-tag">#保家卫国</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">1979年<br><span class="handwritten">第 16801 天</span></div>
+        <div class="timeline-dot" style="border-color: var(--emotion-calm);"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">转业回家</div>
+          <div class="timeline-desc">脱下军装，带着妻子和两个孩子回到济南。结束了漂泊，开始另一种生活。</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">#转折</span>
+            <span class="timeline-tag">#家庭</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">1994年<br><span class="handwritten">第 22280 天</span></div>
+        <div class="timeline-dot" style="border-color: var(--emotion-joy);"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">开始写诗</div>
+          <div class="timeline-desc">退休后拿起笔，记录下那些年在战壕里、在行军路上想说出的话。诗里有雪花、有战友、有故乡。</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">#创作</span>
+            <span class="timeline-tag">#诗歌</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">2024年<br><span class="handwritten">第 33220 天</span></div>
+        <div class="timeline-dot" style="border-color: var(--emotion-sad);"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">归于长河</div>
+          <div class="timeline-desc">在睡梦中安详离世。桌上还摊着未完成的诗稿，窗外是他最爱的那棵老槐树。</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">#告别</span>
+            <span class="timeline-tag">#永恒</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-footer">
+      <div class="share-actions">
+        <button class="btn-hand btn-primary">生成我的人生长河 →</button>
+        <button class="btn-hand">分享这个故事</button>
+      </div>
+      <p style="color: var(--color-ink-muted); font-size: 13px;">
+        由 AI 辅助整理 · 基于 47 段对话记录 · 4 份手稿
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 主题切换
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  }
+  
+  // 恢复主题设置
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+
+  // 页面路由（简单版）
+  document.querySelectorAll('.nav-link, .btn-hand[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+      if (href.startsWith('#')) {
+        e.preventDefault();
+        const targetId = href.slice(1);
+        document.querySelectorAll('.page-content').forEach(page => {
+          page.style.display = 'none';
+        });
+        document.getElementById(targetId).style.display = 'block';
+        
+        // 更新导航状态
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        if (link.classList.contains('nav-link')) {
+          link.classList.add('active');
+        }
+      }
+    });
+  });
+
+  // 生成情绪日历点阵
+  const emotions = ['calm', 'joy', 'anxiety', 'tired', 'sad', 'excited'];
+  const calendar = document.getElementById('calendar');
+  for (let i = 0; i < 91; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'calendar-cell';
+    const dot = document.createElement('span');
+    dot.className = `emotion-dot ${emotions[Math.floor(Math.random() * emotions.length)]}`;
+    dot.style.width = `${8 + Math.random() * 6}px`;
+    dot.style.height = dot.style.width;
+    dot.style.opacity = 0.6 + Math.random() * 0.4;
+    cell.appendChild(dot);
+    calendar.appendChild(cell);
+  }
+</script>
+
+</body>
+</html>

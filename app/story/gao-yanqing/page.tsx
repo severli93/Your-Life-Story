@@ -180,7 +180,7 @@ function ArtifactModal({
         initial={{ opacity: 0, scale: 0.96, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.35, ease }}
-        className="relative max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-[#F0EBE0] rounded-2xl shadow-[0_0_100px_rgba(0,0,0,0.9),0_0_40px_rgba(212,168,83,0.12)] border border-[#D8D0C0]"
+        className="relative max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-[var(--color-surface)] rounded-2xl shadow-[0_0_100px_rgba(0,0,0,0.9),0_0_40px_rgba(212,168,83,0.12)] border border-[var(--color-border-main)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
@@ -200,7 +200,7 @@ function ArtifactModal({
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[rgba(240,235,224,0.85)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--color-surface)]" style={{ opacity: 0.85 }} />
           <div className="absolute top-4 left-4 bg-[rgba(26,26,42,0.85)] text-[#D4A853] text-[9px] px-3 py-1 rounded-full font-ui tracking-widest uppercase backdrop-blur-sm">
             档案编号 {artifact.id}
           </div>
@@ -208,20 +208,20 @@ function ArtifactModal({
         </div>
 
         {/* Content */}
-        <div className="p-6 md:p-8 text-[#1A1A2A]">
+        <div className="p-6 md:p-8 text-[var(--color-text-main)]">
           <h3 className="font-display text-2xl md:text-3xl font-bold mb-5 leading-snug">
             {artifact.title}
           </h3>
 
           <div className="space-y-4 mb-6">
             {artifact.fullDesc.split("\n\n").map((para, i) => (
-              <p key={i} className="font-narrative text-[0.95rem] text-[#3A3A4A] leading-relaxed">
+              <p key={i} className="font-narrative text-[0.95rem] text-[var(--color-text-soft)] leading-relaxed">
                 {para}
               </p>
             ))}
           </div>
 
-          <div className="flex gap-2 flex-wrap border-t border-[#D8D0C0] pt-4">
+          <div className="flex gap-2 flex-wrap border-t border-[var(--color-border-main)] pt-4">
             {artifact.tags.map((tag) => (
               <span
                 key={tag}
@@ -496,8 +496,8 @@ export default function GaoYanqingPage() {
         </motion.div>
       </section>
 
-      {/* ═══ 2. OPENING PORTRAIT — light warm section ═══ */}
-      <section className="bg-[#F7F3EE] py-20 px-6">
+      {/* ═══ 2. OPENING PORTRAIT — adapts to theme ═══ */}
+      <section className="bg-[var(--color-deep)] py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Portraits collage */}
@@ -538,23 +538,23 @@ export default function GaoYanqingPage() {
             </FadeIn>
 
             {/* Text */}
-            <FadeIn delay={0.2} className="text-[#1A1A2A]">
+            <FadeIn delay={0.2} className="text-[var(--color-text-main)]">
               <span className="font-ui text-[10px] tracking-[0.36em] uppercase text-[#D4A853] mb-4 block">People&apos;s Volunteer Army Veteran</span>
               <h2 className="font-display text-4xl md:text-5xl font-bold mb-6 leading-tight">
                 时代的<br />见证者
               </h2>
-              <p className="font-narrative text-lg leading-loose text-[#3A3A4A] mb-6">
+              <p className="font-narrative text-lg leading-loose text-[var(--color-text-soft)] mb-6">
                 1933年，高延清出生于日本占领下的大连瓦房店。
                 战火中的童年，磨砺出了坚韧的心性——
                 18岁那年，他主动请缨，随中国人民志愿军跨过鸭绿江。
               </p>
-              <p className="font-narrative text-lg leading-loose text-[#3A3A4A] mb-8">
+              <p className="font-narrative text-lg leading-loose text-[var(--color-text-soft)] mb-8">
                 此后二十八年，他历经朝鲜战场的硝烟、
                 中央机关的沉稳岁月、辽阳石化的建设年代，
                 最终以笔为剑，写就逾六万字的《清风霁月》，
                 将一个时代的呼声，永远留存于纸页之间。
               </p>
-              <div className="grid grid-cols-3 gap-4 border-t border-[#E0D8CC] pt-6">
+              <div className="grid grid-cols-3 gap-4 border-t border-[var(--color-border-main)] pt-6">
                 {[
                   { n: "2枚", l: "军功章" },
                   { n: "3次", l: "天安门观礼" },
@@ -562,7 +562,7 @@ export default function GaoYanqingPage() {
                 ].map(({ n, l }) => (
                   <div key={l} className="text-center">
                     <div className="font-display text-xl font-bold text-[#D4A853]">{n}</div>
-                    <div className="font-ui text-[9px] tracking-widest text-[#7A7A8A] uppercase mt-1">{l}</div>
+                    <div className="font-ui text-[9px] tracking-widest text-[var(--color-text-dim)] uppercase mt-1">{l}</div>
                   </div>
                 ))}
               </div>
@@ -852,12 +852,12 @@ export default function GaoYanqingPage() {
       </section>
 
       {/* ═══ 4. ARTIFACTS VAULT — Lupi style ═══ */}
-      <section className="bg-[#F0EBE0] py-24 px-6">
+      <section className="bg-[var(--color-surface)] py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <FadeIn className="text-center mb-4">
             <span className="font-ui text-[10px] tracking-[0.36em] uppercase text-[#D4A853] block mb-3">Archive · Lupi Style</span>
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-[#1A1A2A]">岁月文档库</h2>
-            <p className="font-narrative italic text-[#6A6A7A] mt-3 text-lg">这些泛黄的纸片，是历史最诚实的证人。</p>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-[var(--color-text-main)]">岁月文档库</h2>
+            <p className="font-narrative italic text-[var(--color-text-soft)] mt-3 text-lg">这些泛黄的纸片，是历史最诚实的证人。</p>
           </FadeIn>
           <FadeIn delay={0.05}>
             <p className="text-center font-ui text-[10px] text-[#A07830] tracking-widest mb-12 uppercase">点击卡片查看文物详情</p>
@@ -869,7 +869,7 @@ export default function GaoYanqingPage() {
               <FadeIn
                 key={artifact.id}
                 delay={i * 0.08}
-                className="relative bg-white rounded-xl shadow-md overflow-hidden border border-[#D8D0C0] cursor-pointer group hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                className="relative bg-[var(--color-surface2)] rounded-xl shadow-md overflow-hidden border border-[var(--color-border-main)] cursor-pointer group hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
               >
                 <div onClick={() => setActiveArtifact(artifact)} className="block">
                   <div className="relative h-64">
@@ -879,7 +879,7 @@ export default function GaoYanqingPage() {
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[rgba(240,235,224,0.9)]" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--color-surface2)]" style={{ opacity: 0.9 }} />
                     {/* Hover reveal */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="bg-[rgba(26,26,42,0.78)] text-[#D4A853] text-[10px] px-4 py-2 rounded-full font-ui tracking-widest uppercase backdrop-blur-sm border border-[#D4A853]/30">
@@ -887,10 +887,10 @@ export default function GaoYanqingPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="p-5 text-[#1A1A2A]">
+                  <div className="p-5 text-[var(--color-text-main)]">
                     <div className="font-ui text-[9px] tracking-widest text-[#D4A853] uppercase mb-1">档案编号 {artifact.id}</div>
                     <h3 className="font-display text-lg font-semibold mb-2">{artifact.title}</h3>
-                    <p className="font-narrative text-sm text-[#5A5A6A] leading-relaxed">{artifact.shortDesc}</p>
+                    <p className="font-narrative text-sm text-[var(--color-text-soft)] leading-relaxed">{artifact.shortDesc}</p>
                     <div className="flex gap-2 mt-3">
                       {artifact.tags.map((tag) => (
                         <span key={tag} className="bg-[#D4A853]/15 text-[#A07830] text-[9px] px-2 py-0.5 rounded-full font-ui tracking-wide">
@@ -979,11 +979,11 @@ export default function GaoYanqingPage() {
       </section>
 
       {/* ═══ 6. FAMILY & WARMTH ═══ */}
-      <section className="bg-[#FBF8F3] py-24 px-6">
+      <section className="bg-[var(--color-deep)] py-24 px-6">
         <div className="max-w-5xl mx-auto">
           <FadeIn className="text-center mb-14">
             <span className="font-ui text-[10px] tracking-[0.36em] uppercase text-[#D4A853] block mb-3">Family Moments</span>
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-[#1A1A2A]">家人环绕的晚年</h2>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-[var(--color-text-main)]">家人环绕的晚年</h2>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -1009,18 +1009,18 @@ export default function GaoYanqingPage() {
               </div>
             </FadeIn>
 
-            <FadeIn delay={0.15} className="text-[#1A1A2A]">
-              <p className="font-narrative text-xl leading-loose text-[#2A2A3A] mb-5">
+            <FadeIn delay={0.15} className="text-[var(--color-text-main)]">
+              <p className="font-narrative text-xl leading-loose text-[var(--color-text-main)] mb-5">
                 子女成家，孙辈繁茂，重孙嬉闹——
                 走过了战场与机关，高延清的晚年，
                 被<em>家人的笑声</em>温柔地填满。
               </p>
-              <p className="font-narrative text-xl leading-loose text-[#4A4A5A] mb-6">
+              <p className="font-narrative text-xl leading-loose text-[var(--color-text-soft)] mb-6">
                 孙女靠在他肩头自拍，孩子们挤在病床前，
                 老人眼中的光，比任何勋章都要闪亮。
               </p>
               <blockquote className="border-l-2 border-[#D4A853] pl-5">
-                <p className="font-narrative italic text-lg text-[#6A6A7A] leading-loose">
+                <p className="font-narrative italic text-lg text-[var(--color-text-soft)] leading-loose">
                   &ldquo;我把每张票根都留着，不是因为贵，是因为
                   那是我真实活过的证明。&rdquo;
                 </p>

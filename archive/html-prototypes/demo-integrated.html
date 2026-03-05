@@ -1,0 +1,2861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YourLifeStory · 人生画布</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Caveat:wght@400;500;600;700&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Color palette */
+  --bg: #FAF8F3;
+  --joy: #F2C55C;
+  --calm: #78B5A8;
+  --anxiety: #E8957A;
+  --tired: #8BAFC4;
+  --sad: #B8A8C8;
+  --excited: #E8A598;
+
+  /* Text */
+  --text-dark: #3A3028;
+  --text-muted: #8C7B6E;
+  --text-light: #BEB0A4;
+
+  /* UI */
+  --border: #D8CFC4;
+  --border-light: #EAE4DC;
+  --card-bg: #FFFDF8;
+  --shadow: rgba(58, 48, 40, 0.08);
+
+  /* Typography */
+  --font-hand: 'Caveat', cursive;
+  --font-zh-head: 'Ma Shan Zheng', cursive;
+  --font-body: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+  --font-serif: 'Plus Jakarta Sans', 'Noto Serif SC', serif;
+  --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================
+   HAND-DRAWN SVG FILTER
+   ============================================ */
+.hand-drawn-border {
+  filter: url(#wobbly);
+}
+
+/* ============================================
+   TOP BAR
+   ============================================ */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  border-bottom: 1.5px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.top-bar-title {
+  font-family: var(--font-zh-head);
+  font-size: 20px;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-bar-title .dot-decoration {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--anxiety);
+  display: inline-block;
+  margin: 0 2px;
+}
+
+.arch-toggle-btn {
+  font-family: var(--font-hand);
+  font-size: 15px;
+  color: var(--text-muted);
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.arch-toggle-btn::before {
+  content: '⊞ ';
+  font-size: 12px;
+}
+
+.arch-toggle-btn:hover {
+  background: var(--border-light);
+  color: var(--text-dark);
+}
+
+/* ============================================
+   ARCHITECTURE PANEL
+   ============================================ */
+.arch-panel {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  background: var(--card-bg);
+  border-bottom: 1.5px solid var(--border-light);
+}
+
+.arch-panel.open {
+  max-height: 300px;
+  padding: 20px 32px;
+}
+
+.arch-inner {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.arch-title {
+  font-family: var(--font-zh-head);
+  font-size: 16px;
+  color: var(--text-dark);
+  margin-bottom: 14px;
+}
+
+.arch-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.arch-layer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.arch-layer-line {
+  width: 3px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.arch-layer-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.arch-layer-icon {
+  font-size: 16px;
+  width: 28px;
+  text-align: center;
+}
+
+.arch-layer-name {
+  font-family: var(--font-zh-head);
+  font-size: 14px;
+  color: var(--text-dark);
+  min-width: 120px;
+}
+
+.arch-layer-desc {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: var(--font-hand);
+  font-size: 14px;
+}
+
+.arch-connector {
+  font-family: var(--font-hand);
+  color: var(--text-light);
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+/* ============================================
+   MAIN DEMO AREA
+   ============================================ */
+.demo-area {
+  display: flex;
+  gap: 0;
+  padding: 28px 28px 40px;
+  align-items: flex-start;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   LEFT: PHONE FRAME
+   ============================================ */
+.phone-section {
+  width: 38%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.phone-section-label {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+.phone-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.phone-tab {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.phone-tab.active {
+  background: var(--text-dark);
+  color: var(--bg);
+  border-color: var(--text-dark);
+}
+
+.phone-frame {
+  width: 280px;
+  height: 570px;
+  background: var(--card-bg);
+  border-radius: 36px;
+  border: 2.5px solid var(--border);
+  box-shadow:
+    0 8px 32px rgba(58,48,40,0.12),
+    0 2px 8px rgba(58,48,40,0.06),
+    inset 0 0 0 1px rgba(255,255,255,0.6);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Phone notch */
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  z-index: 10;
+}
+
+.phone-screen {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+
+.phone-screen.active {
+  display: flex;
+}
+
+/* Phone header */
+.phone-header {
+  padding: 22px 16px 10px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.phone-header-title {
+  font-family: var(--font-zh-head);
+  font-size: 18px;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.phone-header-date {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Wave decoration */
+.wave-deco {
+  display: inline-block;
+  font-size: 12px;
+  color: var(--calm);
+}
+
+/* ============================================
+   CHAT SCREEN
+   ============================================ */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+.chat-messages::-webkit-scrollbar { width: 3px; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.msg-ai, .msg-user {
+  max-width: 84%;
+  font-size: 12.5px;
+  line-height: 1.65;
+  border-radius: 12px;
+  padding: 9px 12px;
+  position: relative;
+}
+
+.msg-ai {
+  background: #F5F1EB;
+  border-left: 2.5px solid var(--calm);
+  align-self: flex-start;
+  color: var(--text-dark);
+}
+
+.msg-ai::before {
+  content: '✳';
+  font-size: 8px;
+  color: var(--calm);
+  position: absolute;
+  top: -4px;
+  left: 6px;
+}
+
+.msg-user {
+  background: #FFF8EE;
+  border: 1px solid var(--border-light);
+  align-self: flex-end;
+  color: var(--text-dark);
+}
+
+.msg-ai .ai-name {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: var(--calm);
+  display: block;
+  margin-bottom: 3px;
+}
+
+.emotion-preview-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(232, 149, 122, 0.12);
+  border: 1px solid rgba(232, 149, 122, 0.3);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--anxiety);
+  margin-top: 6px;
+  font-family: var(--font-hand);
+  width: fit-content;
+}
+
+.emotion-preview-chip .chip-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--anxiety);
+  flex-shrink: 0;
+}
+
+.chat-input-area {
+  padding: 8px 12px 12px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.chat-input {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-dark);
+  outline: none;
+}
+
+.chat-input:focus { border-color: var(--calm); }
+
+.chat-send-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--text-dark);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.chat-send-btn:hover { transform: scale(1.08); }
+
+.chat-send-btn svg { width: 14px; height: 14px; fill: var(--bg); }
+
+/* ============================================
+   CHECK-IN SCREEN
+   ============================================ */
+.checkin-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.checkin-scroll::-webkit-scrollbar { width: 3px; }
+.checkin-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.checkin-question {
+  font-family: var(--font-hand);
+  font-size: 16px;
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.emotion-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.emotion-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.emotion-btn:hover { transform: scale(1.04); }
+
+.emotion-btn.selected {
+  border-width: 2px;
+  transform: scale(1.07);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.emotion-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  font-family: var(--font-hand);
+}
+
+.emotion-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+.intensity-section {
+  margin-bottom: 14px;
+}
+
+.intensity-label {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.intensity-circles {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.intensity-dot {
+  border-radius: 50%;
+  border: 1.5px solid var(--anxiety);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.intensity-dot.filled { background: var(--anxiety); }
+
+.journal-area {
+  margin-bottom: 14px;
+}
+
+.journal-label {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.journal-input {
+  width: 100%;
+  height: 64px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 11.5px;
+  font-family: var(--font-body);
+  color: var(--text-dark);
+  background: #FFFCF6;
+  resize: none;
+  outline: none;
+  line-height: 1.8;
+  /* Ruled lines background */
+  background-image: repeating-linear-gradient(
+    transparent, transparent 23px,
+    rgba(216, 207, 196, 0.4) 23px, rgba(216, 207, 196, 0.4) 24px
+  );
+  background-position: 0 6px;
+}
+
+.journal-input:focus { border-color: var(--calm); }
+
+.checkin-submit {
+  width: 100%;
+  padding: 10px;
+  border-radius: 20px;
+  border: 2px solid var(--text-dark);
+  background: none;
+  font-family: var(--font-zh-head);
+  font-size: 15px;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.checkin-submit:hover {
+  background: var(--text-dark);
+  color: var(--bg);
+}
+
+/* ============================================
+   TIMELINE SCREEN (Mobile)
+   ============================================ */
+.mobile-timeline {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mobile-timeline::-webkit-scrollbar { width: 3px; }
+.mobile-timeline::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.mobile-timeline-title {
+  font-family: var(--font-zh-head);
+  font-size: 16px;
+  color: var(--text-dark);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.postcard-stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.postcard {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  position: relative;
+}
+
+.postcard:nth-child(even) {
+  margin-left: 8px;
+  margin-right: -4px;
+}
+
+.postcard-month-tag {
+  font-family: var(--font-hand);
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+
+.postcard-emotion-dots {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.postcard-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+
+.postcard-quote {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+.demo-divider {
+  width: 1px;
+  background: var(--border-light);
+  margin: 0 24px;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   RIGHT: DESKTOP VIEW
+   ============================================ */
+.desktop-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.desktop-section-label {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+}
+
+.desktop-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1.5px solid var(--border-light);
+  padding-bottom: 0;
+}
+
+.desktop-tab {
+  font-family: var(--font-hand);
+  font-size: 15px;
+  padding: 6px 18px 10px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.desktop-tab.active {
+  color: var(--text-dark);
+}
+
+.desktop-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1.5px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--text-dark);
+  border-radius: 1px;
+}
+
+.desktop-screen {
+  display: none;
+}
+
+.desktop-screen.active {
+  display: flex;
+  gap: 16px;
+}
+
+/* ============================================
+   DESKTOP SIDEBAR
+   ============================================ */
+.desktop-sidebar {
+  width: 156px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.sidebar-app-name {
+  font-family: var(--font-zh-head);
+  font-size: 15px;
+  color: var(--text-dark);
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 8px;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+.sidebar-nav-item:hover { background: rgba(58,48,40,0.05); }
+.sidebar-nav-item.active { background: rgba(58,48,40,0.08); color: var(--text-dark); }
+
+.sidebar-icon {
+  width: 20px; height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-user {
+  margin-top: auto;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--joy), var(--excited));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: white;
+  font-family: var(--font-hand);
+}
+
+.sidebar-username {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+}
+
+/* ============================================
+   CALENDAR SCREEN (Dear Data Style)
+   ============================================ */
+.calendar-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.calendar-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--text-dark);
+}
+
+.calendar-subtitle {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Calendar grid */
+.cal-grid-wrap {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+  gap: 2px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--text-light);
+  padding-bottom: 4px;
+}
+
+.cal-weekday.weekend { color: var(--anxiety); }
+
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.cal-day:hover { transform: scale(1.12); }
+
+.cal-day.empty { opacity: 0; pointer-events: none; }
+
+.cal-day.future {
+  border: 1.5px solid var(--border-light);
+  background: transparent;
+}
+
+.cal-day.past {
+  /* color set inline via JS */
+}
+
+.cal-day-inner {
+  font-family: var(--font-hand);
+  font-size: 9px;
+  line-height: 1;
+  color: rgba(255,255,255,0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.cal-day-num {
+  font-size: 8px;
+  color: rgba(58,48,40,0.5);
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-family: var(--font-hand);
+  line-height: 1;
+}
+
+.cal-day.past .cal-day-num {
+  color: rgba(255,255,255,0.6);
+}
+
+.cal-day-symbol {
+  font-size: 9px;
+}
+
+/* Tooltip */
+.cal-tooltip {
+  position: fixed;
+  background: var(--text-dark);
+  color: var(--bg);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-family: var(--font-hand);
+  font-size: 13px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1000;
+  white-space: nowrap;
+  max-width: 180px;
+  white-space: pre-line;
+}
+
+.cal-tooltip.visible { opacity: 1; }
+
+/* Emotion legend */
+.emotion-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.legend-circle {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cal-stats {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 8px 12px;
+  background: rgba(232,149,122,0.08);
+  border-radius: 8px;
+  border-left: 3px solid var(--anxiety);
+}
+
+/* Right panel */
+.cal-right-panel {
+  width: 180px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.panel-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.panel-card-title {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 6px;
+}
+
+.week-viz {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.week-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.week-day-label {
+  font-family: var(--font-hand);
+  font-size: 10px;
+  color: var(--text-light);
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.week-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.changhe-says {
+  font-family: var(--font-serif);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  font-style: italic;
+}
+
+.changhe-label {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--calm);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.gen-story-btn {
+  width: 100%;
+  padding: 9px;
+  border-radius: 20px;
+  border: 2px solid var(--calm);
+  background: none;
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--calm);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.gen-story-btn:hover {
+  background: var(--calm);
+  color: white;
+}
+
+/* ============================================
+   DESKTOP TIMELINE SCREEN
+   ============================================ */
+.timeline-screen-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeline-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--text-dark);
+}
+
+.timeline-body {
+  flex: 1;
+  position: relative;
+  padding: 10px 0;
+}
+
+/* Vertical timeline line (SVG-like wobble via CSS) */
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--border) 0px,
+    var(--border) 6px,
+    transparent 6px,
+    transparent 9px
+  );
+}
+
+.timeline-nodes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
+
+.tl-node {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+}
+
+.tl-node.left .tl-card {
+  order: -1;
+  text-align: right;
+}
+
+.tl-node.left .tl-dots {
+  justify-content: flex-end;
+}
+
+.tl-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  padding-top: 8px;
+}
+
+.tl-circle {
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.tl-card {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.tl-date {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.tl-quote {
+  font-size: 12.5px;
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.tl-dots {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.tl-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+
+.tl-view-btn {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--text-light);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2px 8px;
+  background: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tl-view-btn:hover {
+  color: var(--text-dark);
+  border-color: var(--text-dark);
+}
+
+/* ============================================
+   ANNUAL REPORT SCREEN
+   ============================================ */
+.annual-report-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.annual-preview-card {
+  width: 100%;
+  max-width: 560px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: 0 4px 20px var(--shadow);
+}
+
+.annual-card-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.annual-card-year {
+  font-family: var(--font-hand);
+  font-size: 36px;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+.annual-card-title {
+  font-family: var(--font-zh-head);
+  font-size: 18px;
+  color: var(--text-dark);
+}
+
+.annual-body {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.annual-pie-area {
+  flex-shrink: 0;
+}
+
+.annual-pie-label {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.annual-stats {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.annual-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.annual-stat-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.annual-stat-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  border-radius: 3px;
+}
+
+.annual-stat-pct {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--text-light);
+  min-width: 32px;
+  text-align: right;
+}
+
+.annual-timeline-preview {
+  border-top: 1px solid var(--border-light);
+  padding-top: 14px;
+  margin-bottom: 16px;
+}
+
+.annual-tl-label {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.annual-tl-strip {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.annual-tl-month {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+}
+
+.annual-tl-bar {
+  width: 100%;
+  border-radius: 2px;
+}
+
+.annual-tl-month-label {
+  font-family: var(--font-hand);
+  font-size: 9px;
+  color: var(--text-light);
+}
+
+.annual-cta {
+  width: 100%;
+  padding: 12px;
+  border-radius: 24px;
+  border: none;
+  background: var(--text-dark);
+  color: var(--bg);
+  font-family: var(--font-zh-head);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.annual-cta:hover {
+  background: #2A2018;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(58,48,40,0.2);
+}
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text-dark);
+  color: var(--bg);
+  padding: 10px 22px;
+  border-radius: 24px;
+  font-family: var(--font-hand);
+  font-size: 15px;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================
+   HAND-DRAWN DECORATIVE ELEMENTS
+   ============================================ */
+.asterisk-deco {
+  color: var(--border);
+  font-size: 12px;
+  user-select: none;
+}
+
+.dot-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  opacity: 0.4;
+}
+
+.dot-row span {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--text-light);
+  display: inline-block;
+}
+
+/* ============================================
+   TYPING INDICATOR
+   ============================================ */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 10px 14px;
+  background: #F5F1EB;
+  border-left: 2.5px solid var(--calm);
+  border-radius: 12px;
+  align-self: flex-start;
+  align-items: center;
+}
+
+.typing-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--calm);
+  animation: typingBounce 1.2s infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ============================================
+   RIVER DECORATION
+   ============================================ */
+.river-deco {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Weekend column highlight */
+.cal-grid-wrap .weekend-col {
+  background: rgba(232, 149, 122, 0.04);
+}
+
+/* Scrollbar for desktop screens */
+.desktop-screen { min-height: 480px; }
+
+/* Make desktop screen full height with internal scroll if needed */
+.calendar-main { overflow-y: auto; max-height: 520px; }
+.calendar-main::-webkit-scrollbar { width: 3px; }
+.calendar-main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ---- Sample Section ---- */
+.sample-section {
+  margin: 16px 0 12px;
+}
+.sample-section-label {
+  font-family: var(--font-hand);
+  font-size: 12px;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.sample-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.sample-card:hover {
+  border-color: var(--calm);
+  box-shadow: 0 2px 12px rgba(120,181,168,0.15);
+}
+.sample-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sample-portrait {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--calm), var(--tired));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-zh-head);
+  font-size: 16px;
+  color: white;
+  flex-shrink: 0;
+}
+.sample-info {
+  flex: 1;
+  min-width: 0;
+}
+.sample-name {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
+}
+.sample-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.sample-arrow {
+  font-family: var(--font-hand);
+  font-size: 14px;
+  color: var(--calm);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---- Sample Modal ---- */
+.sample-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(58,48,40,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.sample-modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.sample-modal {
+  background: var(--card-bg);
+  border-radius: 12px;
+  width: min(520px, 90vw);
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(16px);
+  transition: transform 0.25s;
+  box-shadow: 0 20px 60px rgba(58,48,40,0.2);
+}
+.sample-modal-overlay.open .sample-modal {
+  transform: translateY(0);
+}
+.sample-modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.sample-modal-title {
+  font-family: var(--font-zh-head);
+  font-size: 20px;
+  color: var(--text-dark);
+  line-height: 1.3;
+}
+.sample-modal-sub {
+  font-family: var(--font-hand);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.sample-modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-light);
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+.sample-modal-close:hover { color: var(--text-muted); }
+.sample-modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+.sample-preview-strip {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.sample-preview-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.sample-quote-block {
+  background: var(--bg);
+  border-left: 3px solid var(--calm);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 0 6px 6px 0;
+}
+.sample-quote-text {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--text-dark);
+  line-height: 1.8;
+  font-style: italic;
+}
+.sample-quote-attr {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.sample-emotion-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sample-emotion-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.sample-emotion-dots-row {
+  display: flex;
+  gap: 4px;
+}
+.sample-emotion-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.sample-modal-footer {
+  padding: 16px 24px 20px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.sample-cta-primary {
+  flex: 1;
+  padding: 10px 0;
+  background: var(--calm);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s;
+}
+.sample-cta-primary:hover { opacity: 0.85; }
+.sample-cta-back {
+  padding: 10px 16px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.sample-cta-back:hover { border-color: var(--text-muted); }
+
+/* ---- Phone FAB ---- */
+.phone-fab {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--calm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(120,181,168,0.4);
+  transition: transform 0.15s, opacity 0.15s;
+  z-index: 10;
+}
+.phone-fab:hover { transform: scale(1.08); }
+.phone-fab.hidden { opacity: 0; pointer-events: none; }
+
+/* ---- Chat Badge ---- */
+.chat-entry { position: relative; }
+.chat-badge {
+  margin-left: auto;
+  font-size: 9px;
+  padding: 1px 5px;
+  background: var(--calm);
+  color: white;
+  border-radius: 10px;
+  font-family: var(--font-ui);
+  letter-spacing: 0;
+}
+
+/* ---- Desktop Chat FAB ---- */
+.desktop-chat-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--calm);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 11px 20px 11px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(120,181,168,0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+  z-index: 100;
+  letter-spacing: -0.01em;
+}
+.desktop-chat-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(120,181,168,0.45);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Hidden SVG defs for hand-drawn filter -->
+<svg width="0" height="0" style="position:absolute;pointer-events:none">
+  <defs>
+    <filter id="wobbly" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- River wave path -->
+    <path id="riverWave" d="M0,4 Q10,0 20,4 Q30,8 40,4 Q50,0 60,4" fill="none" stroke-width="1.5"/>
+  </defs>
+</svg>
+
+<!-- Tooltip (global, positioned by JS) -->
+<div class="cal-tooltip" id="calTooltip"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast">故事生成中... ✦</div>
+
+<!-- Sample Modal -->
+<div class="sample-modal-overlay" id="sampleModal" onclick="closeSampleModal(event)">
+  <div class="sample-modal">
+    <div class="sample-modal-header">
+      <div>
+        <div class="sample-modal-title">高延清的人生长河</div>
+        <div class="sample-modal-sub">军人 · 诗人 · 父亲 · 1940–2025</div>
+      </div>
+      <button class="sample-modal-close" onclick="closeSampleModal()">✕</button>
+    </div>
+    <div class="sample-modal-body">
+      <div class="sample-preview-strip">
+        <span class="sample-preview-tag">312天记录</span>
+        <span class="sample-preview-tag">47个节点</span>
+        <span class="sample-preview-tag">参军 · 转业 · 创作</span>
+        <span class="sample-preview-tag">1940–2025</span>
+      </div>
+      <div class="sample-quote-block">
+        <div class="sample-quote-text">「时光荏苒，岁月如歌。回首往事，我所珍视的，是那些平凡而真实的瞬间——</div>
+        <div class="sample-quote-text">一碗热饭，一声问候，一封家书，一个眼神。」</div>
+        <div class="sample-quote-attr">— 高延清，2024年手记</div>
+      </div>
+      <div class="sample-emotion-row">
+        <span class="sample-emotion-label">人生情绪主色调</span>
+        <div class="sample-emotion-dots-row">
+          <div class="sample-emotion-dot" style="background:var(--calm)"></div>
+          <div class="sample-emotion-dot" style="background:var(--joy)"></div>
+          <div class="sample-emotion-dot" style="background:var(--tired)"></div>
+          <div class="sample-emotion-dot" style="background:var(--excited)"></div>
+        </div>
+        <span style="font-size:11px;color:var(--text-muted)">平静 · 喜悦 · 疲惫 · 兴奋</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.7">
+        这是高延清生命中最后几年，在女儿的陪伴下，用语音和文字留下的人生记录。<br>
+        长河陪伴了他 <strong>189</strong> 次对话，整理出 <strong>47</strong> 个珍贵的人生节点。
+      </div>
+    </div>
+    <div class="sample-modal-footer">
+      <button class="sample-cta-back" onclick="closeSampleModal()">← 返回</button>
+      <button class="sample-cta-primary" onclick="openFullSample()">体验完整人生页面 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     TOP BAR
+     ============================================ -->
+<div class="top-bar">
+  <div class="top-bar-title">
+    YourLifeStory
+    <span class="dot-decoration"></span>
+    人生画布
+  </div>
+  <button class="arch-toggle-btn" onclick="toggleArch()">架构说明</button>
+</div>
+
+<!-- ============================================
+     ARCHITECTURE PANEL
+     ============================================ -->
+<div class="arch-panel" id="archPanel">
+  <div class="arch-inner">
+    <div class="arch-title">YourLifeStory · 人生画布 · 系统架构</div>
+    <div class="arch-layers">
+
+      <div class="arch-layer">
+        <div class="arch-layer-line" style="background:var(--calm)"></div>
+        <div class="arch-layer-content">
+          <div class="arch-layer-icon">💬</div>
+          <div class="arch-layer-name">长河 · 对话层</div>
+          <div class="arch-connector">→</div>
+          <div class="arch-layer-desc">每日陪伴，情绪觉察，记忆引导</div>
+        </div>
+      </div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-line" style="background:var(--joy)"></div>
+        <div class="arch-layer-content">
+          <div class="arch-layer-icon">📔</div>
+          <div class="arch-layer-name">记录层</div>
+          <div class="arch-connector">→</div>
+          <div class="arch-layer-desc">情绪日历，月度摘要，年度报告</div>
+        </div>
+      </div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-line" style="background:var(--tired)"></div>
+        <div class="arch-layer-content">
+          <div class="arch-layer-icon">🗃️</div>
+          <div class="arch-layer-name">素材库</div>
+          <div class="arch-connector">→</div>
+          <div class="arch-layer-desc">照片、文稿、语音上传</div>
+        </div>
+      </div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-line" style="background:var(--excited)"></div>
+        <div class="arch-layer-content">
+          <div class="arch-layer-icon">✨</div>
+          <div class="arch-layer-name">故事生成层</div>
+          <div class="arch-connector">→</div>
+          <div class="arch-layer-desc">从对话 + 素材生成人生故事页</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     MAIN DEMO AREA
+     ============================================ -->
+<div class="demo-area">
+
+  <!-- ==================== LEFT: PHONE ==================== -->
+  <div class="phone-section">
+    <div class="phone-section-label">· 移动端 ·</div>
+
+    <div class="phone-tabs">
+      <button class="phone-tab active" onclick="switchPhone('chat', this)">Chat</button>
+      <button class="phone-tab" onclick="switchPhone('checkin', this)">日记</button>
+      <button class="phone-tab" onclick="switchPhone('mtimeline', this)">时间轴</button>
+    </div>
+
+    <div class="phone-frame">
+
+      <!-- SCREEN 1: CHAT -->
+      <div class="phone-screen active" id="phone-chat">
+        <div class="phone-header">
+          <div class="phone-header-title">
+            长河
+            <svg width="28" height="10" viewBox="0 0 28 10" fill="none">
+              <path d="M1,5 Q5,1 9,5 Q13,9 17,5 Q21,1 25,5" stroke="#78B5A8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="phone-header-date">3月4日</div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <!-- AI msg -->
+          <div class="msg-ai">
+            <span class="ai-name">长河</span>
+            今天过得怎么样？
+          </div>
+
+          <!-- User msg -->
+          <div class="msg-user">
+            有点焦虑，但说不清楚在焦虑什么
+          </div>
+
+          <!-- AI msg -->
+          <div class="msg-ai">
+            <span class="ai-name">长河</span>
+            焦虑又说不清楚来源——<br>
+            先问问你的身体：<br>
+            肩膀、胸口、还是别的地方？
+          </div>
+
+          <!-- User msg -->
+          <div class="msg-user">
+            肩膀很沉
+          </div>
+
+          <!-- AI msg with emotion chip -->
+          <div class="msg-ai">
+            <span class="ai-name">长河</span>
+            肩膀沉。那个重量在替你扛着什么。<br><br>
+            今天这是
+            <svg width="14" height="14" viewBox="0 0 14 14" style="vertical-align:middle">
+              <circle cx="7" cy="7" r="5" fill="none" stroke="#E8957A" stroke-width="1.5"/>
+              <path d="M4,7 Q7,4 10,7" stroke="#E8957A" stroke-width="1" fill="none"/>
+            </svg>
+            <div class="emotion-preview-chip">
+              <div class="chip-dot"></div>
+              焦虑 · 5/10 &nbsp;·&nbsp; 今天
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" class="chat-input" id="chatInput" placeholder="今天的一笔..." onkeydown="handleChatKey(event)">
+          <button class="chat-send-btn" onclick="sendChat()">
+            <svg viewBox="0 0 16 16"><path d="M2 8l12-6-5 6 5 6z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: CHECK-IN -->
+      <div class="phone-screen" id="phone-checkin">
+        <div class="phone-header">
+          <div class="phone-header-title">今天的一笔</div>
+          <div class="phone-header-date">3月4日</div>
+        </div>
+
+        <div class="checkin-scroll">
+          <div class="checkin-question">今天感觉如何？</div>
+
+          <div class="emotion-grid">
+            <button class="emotion-btn" data-emotion="joy" onclick="selectEmotion(this)">
+              <div class="emotion-circle" style="background:var(--joy)">★</div>
+              <div class="emotion-label">喜悦</div>
+            </button>
+            <button class="emotion-btn" data-emotion="calm" onclick="selectEmotion(this)">
+              <div class="emotion-circle" style="background:var(--calm)">—</div>
+              <div class="emotion-label">平静</div>
+            </button>
+            <button class="emotion-btn selected" data-emotion="anxiety" onclick="selectEmotion(this)" style="border-color:var(--anxiety);background:rgba(232,149,122,0.08)">
+              <div class="emotion-circle" style="background:var(--anxiety)">∿</div>
+              <div class="emotion-label">焦虑</div>
+            </button>
+            <button class="emotion-btn" data-emotion="tired" onclick="selectEmotion(this)">
+              <div class="emotion-circle" style="background:var(--tired)">·</div>
+              <div class="emotion-label">疲惫</div>
+            </button>
+            <button class="emotion-btn" data-emotion="sad" onclick="selectEmotion(this)">
+              <div class="emotion-circle" style="background:var(--sad)">∪</div>
+              <div class="emotion-label">悲伤</div>
+            </button>
+            <button class="emotion-btn" data-emotion="excited" onclick="selectEmotion(this)">
+              <div class="emotion-circle" style="background:var(--excited)">✦</div>
+              <div class="emotion-label">兴奋</div>
+            </button>
+          </div>
+
+          <div class="intensity-section">
+            <div class="intensity-label">强度</div>
+            <div class="intensity-circles" id="intensityCircles">
+              <div class="intensity-dot filled" style="width:14px;height:14px" onclick="setIntensity(1)"></div>
+              <div class="intensity-dot filled" style="width:17px;height:17px" onclick="setIntensity(2)"></div>
+              <div class="intensity-dot filled" style="width:20px;height:20px" onclick="setIntensity(3)"></div>
+              <div class="intensity-dot filled" style="width:23px;height:23px" onclick="setIntensity(4)"></div>
+              <div class="intensity-dot filled" style="width:26px;height:26px" onclick="setIntensity(5)"></div>
+            </div>
+          </div>
+
+          <div class="journal-area">
+            <div class="journal-label">今天一句话</div>
+            <textarea class="journal-input" placeholder="今天说不清楚在焦虑什么，但肩膀很沉..."></textarea>
+          </div>
+
+          <button class="checkin-submit" onclick="submitCheckin()">记录</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 3: MOBILE TIMELINE -->
+      <div class="phone-screen" id="phone-mtimeline">
+        <div class="phone-header">
+          <div class="phone-header-title">
+            <svg width="16" height="10" viewBox="0 0 16 10" fill="none" style="margin-right:4px">
+              <path d="M1,5 Q4,1 7,5 Q10,9 13,5 Q15,3 15,5" stroke="#8C7B6E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+            记忆
+          </div>
+          <div class="phone-header-date">2026</div>
+        </div>
+
+        <div class="mobile-timeline">
+          <div class="postcard-stack">
+
+            <div class="postcard">
+              <div class="postcard-month-tag">2026年 3月</div>
+              <div class="postcard-emotion-dots">
+                <div class="postcard-dot" style="background:var(--anxiety)"></div>
+                <div class="postcard-dot" style="background:var(--calm)"></div>
+                <div class="postcard-dot" style="background:var(--anxiety)"></div>
+                <div class="postcard-dot" style="background:var(--tired)"></div>
+              </div>
+              <div class="postcard-quote">"说不清楚在焦虑什么，但肩膀很沉。也许只是开春了，身体还没反应过来。"</div>
+            </div>
+
+            <div class="postcard">
+              <div class="postcard-month-tag">2026年 2月</div>
+              <div class="postcard-emotion-dots">
+                <div class="postcard-dot" style="background:var(--joy)"></div>
+                <div class="postcard-dot" style="background:var(--calm)"></div>
+                <div class="postcard-dot" style="background:var(--excited)"></div>
+              </div>
+              <div class="postcard-quote">"春节回家，吃到了外婆的糯米饭。觉得有些东西一直在，就算我们很久没想起来。"</div>
+            </div>
+
+            <div class="postcard">
+              <div class="postcard-month-tag">2026年 1月</div>
+              <div class="postcard-emotion-dots">
+                <div class="postcard-dot" style="background:var(--tired)"></div>
+                <div class="postcard-dot" style="background:var(--sad)"></div>
+                <div class="postcard-dot" style="background:var(--calm)"></div>
+              </div>
+              <div class="postcard-quote">"年末总结了一下，做到了三件事，没做到两件。够了。"</div>
+            </div>
+
+            <div class="postcard">
+              <div class="postcard-month-tag">2025年 12月</div>
+              <div class="postcard-emotion-dots">
+                <div class="postcard-dot" style="background:var(--excited)"></div>
+                <div class="postcard-dot" style="background:var(--joy)"></div>
+                <div class="postcard-dot" style="background:var(--calm)"></div>
+              </div>
+              <div class="postcard-quote">"第一次独自在异乡过生日，意外地不孤单——因为我已经开始好好记录自己了。"</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating chat FAB (shown on non-chat screens) -->
+      <div class="phone-fab" id="phoneFab" onclick="switchPhone('chat', null)" title="与长河对话">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M3,15 Q2,18 5,17 L17,12 Q20,10 17,7 L10,3 Q7,1 5,5 L3,15Z" fill="none" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="8" cy="9" r="1" fill="white"/>
+          <circle cx="11" cy="9" r="1" fill="white"/>
+          <circle cx="14" cy="9" r="1" fill="white"/>
+        </svg>
+      </div>
+    </div><!-- /phone-frame -->
+  </div><!-- /phone-section -->
+
+  <!-- DIVIDER -->
+  <div class="demo-divider"></div>
+
+  <!-- ==================== RIGHT: DESKTOP ==================== -->
+  <div class="desktop-section">
+    <div class="desktop-section-label">· 桌面端 ·</div>
+
+    <div class="desktop-tabs">
+      <button class="desktop-tab active" onclick="switchDesktop('calendar', this)">情绪日历</button>
+      <button class="desktop-tab" onclick="switchDesktop('dtimeline', this)">时间轴</button>
+      <button class="desktop-tab" onclick="switchDesktop('annual', this)">年度报告</button>
+    </div>
+
+    <!-- ===== DESKTOP SCREEN 1: CALENDAR ===== -->
+    <div class="desktop-screen active" id="desktop-calendar">
+
+      <!-- Sidebar -->
+      <div class="desktop-sidebar">
+        <div class="sidebar-app-name">YourLifeStory</div>
+
+        <div class="sidebar-nav-item active chat-entry" onclick="switchDesktop('calendar', document.querySelector('.desktop-tab'))">
+          <div class="sidebar-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2,13 Q1,15 3,14.5 L14,10 Q16,9 14,6.5 L9,2.5 Q7,1 5,4 L2,13Z" fill="none" stroke="#78B5A8" stroke-width="1.4" stroke-linejoin="round"/>
+              <circle cx="7" cy="8" r="0.8" fill="#78B5A8"/>
+              <circle cx="9.5" cy="8" r="0.8" fill="#78B5A8"/>
+              <circle cx="12" cy="8" r="0.8" fill="#78B5A8"/>
+            </svg>
+          </div>
+          长河
+          <span class="chat-badge">对话</span>
+        </div>
+
+        <div class="sidebar-nav-item">
+          <div class="sidebar-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#8C7B6E" stroke-width="1.3" fill="none"/>
+              <line x1="5" y1="6.5" x2="11" y2="6.5" stroke="#8C7B6E" stroke-width="1"/>
+              <line x1="5" y1="9" x2="9" y2="9" stroke="#8C7B6E" stroke-width="1"/>
+            </svg>
+          </div>
+          日记
+        </div>
+
+        <div class="sidebar-nav-item">
+          <div class="sidebar-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="4" cy="4" r="2" fill="none" stroke="#8C7B6E" stroke-width="1.2"/>
+              <circle cx="12" cy="8" r="2" fill="none" stroke="#8C7B6E" stroke-width="1.2"/>
+              <circle cx="4" cy="12" r="2" fill="none" stroke="#8C7B6E" stroke-width="1.2"/>
+              <line x1="4" y1="6" x2="4" y2="10" stroke="#BEB0A4" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="6" y1="4" x2="10" y2="8" stroke="#BEB0A4" stroke-width="1" stroke-dasharray="2,2"/>
+            </svg>
+          </div>
+          时间轴
+        </div>
+
+        <div class="sidebar-nav-item">
+          <div class="sidebar-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8,2 L9.5,6 L14,6 L10.5,8.5 L12,13 L8,10 L4,13 L5.5,8.5 L2,6 L6.5,6 Z" stroke="#8C7B6E" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          故事生成
+        </div>
+
+        <div class="sidebar-nav-item">
+          <div class="sidebar-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2,10 L6,4 L10,7 L14,2" stroke="#8C7B6E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <path d="M10,2 L14,2 L14,6" stroke="#8C7B6E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          分享
+        </div>
+
+        <div style="flex:1"></div>
+
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">高</div>
+          <div class="sidebar-username">高延清</div>
+        </div>
+      </div>
+
+      <!-- Calendar Main -->
+      <div class="calendar-main">
+        <div class="calendar-header">
+          <div class="calendar-title">三月的情绪</div>
+          <div class="calendar-subtitle">2026 March</div>
+        </div>
+
+        <!-- The Dear Data Calendar -->
+        <div class="cal-grid-wrap">
+          <div class="cal-weekdays">
+            <div class="cal-weekday">一</div>
+            <div class="cal-weekday">二</div>
+            <div class="cal-weekday">三</div>
+            <div class="cal-weekday">四</div>
+            <div class="cal-weekday">五</div>
+            <div class="cal-weekday weekend">六</div>
+            <div class="cal-weekday weekend">日</div>
+          </div>
+          <div class="cal-days" id="calDays">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="emotion-legend">
+          <div class="legend-item">
+            <div class="legend-circle" style="background:var(--joy)"></div> 喜悦
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background:var(--calm)"></div> 平静
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background:var(--anxiety)"></div> 焦虑
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background:var(--tired)"></div> 疲惫
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background:var(--sad)"></div> 悲伤
+          </div>
+          <div class="legend-item">
+            <div class="legend-circle" style="background:var(--excited)"></div> 兴奋
+          </div>
+        </div>
+
+        <div class="cal-stats">
+          这个月最常见的感受：<strong>焦虑 (42%)</strong> &nbsp;·&nbsp; 平静 (28%) &nbsp;·&nbsp; 疲惫 (18%)
+        </div>
+
+      </div><!-- /calendar-main -->
+
+      <!-- Right Panel -->
+      <div class="cal-right-panel">
+
+        <div class="panel-card">
+          <div class="panel-card-title">本周摘要</div>
+          <div class="week-viz">
+            <div class="week-row">
+              <div class="week-day-label">一</div>
+              <div class="week-dot" style="background:var(--anxiety)"></div>
+              <div class="week-dot" style="background:var(--tired)"></div>
+            </div>
+            <div class="week-row">
+              <div class="week-day-label">二</div>
+              <div class="week-dot" style="background:var(--calm)"></div>
+            </div>
+            <div class="week-row">
+              <div class="week-day-label">三</div>
+              <div class="week-dot" style="background:var(--anxiety)"></div>
+              <div class="week-dot" style="background:var(--anxiety)"></div>
+            </div>
+            <div class="week-row">
+              <div class="week-day-label">四</div>
+              <div class="week-dot" style="background:var(--tired)"></div>
+            </div>
+            <div class="week-row">
+              <div class="week-day-label">五</div>
+              <div class="week-dot" style="background:var(--anxiety)"></div>
+              <div class="week-dot" style="background:var(--calm)"></div>
+            </div>
+            <div class="week-row">
+              <div class="week-day-label">六</div>
+              <div class="week-dot" style="background:var(--calm)"></div>
+            </div>
+            <div class="week-row">
+              <div class="week-day-label">日</div>
+              <div class="week-dot" style="background:var(--joy)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-card-title">长河 说</div>
+          <span class="changhe-label">长河的观察</span>
+          <div class="changhe-says">
+            这周焦虑出现了三次，但每次都只持续半天。
+            你正在学会和它待在一起，而不是逃跑。
+          </div>
+        </div>
+
+        <button class="gen-story-btn" onclick="showToast('正在为你生成本月故事...')">
+          生成月度故事 →
+        </button>
+
+      </div>
+
+    </div><!-- /desktop-calendar -->
+
+    <!-- ===== DESKTOP SCREEN 2: TIMELINE ===== -->
+    <div class="desktop-screen" id="desktop-dtimeline" style="flex-direction:column">
+      <div class="timeline-screen-wrap">
+        <div class="timeline-title-row">
+          <svg width="32" height="14" viewBox="0 0 32 14" fill="none">
+            <path d="M1,7 Q5,2 9,7 Q13,12 17,7 Q21,2 25,7 Q29,4 31,7" stroke="#8BAFC4" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="timeline-title">记忆的河流</div>
+          <svg width="32" height="14" viewBox="0 0 32 14" fill="none">
+            <path d="M1,7 Q5,2 9,7 Q13,12 17,7 Q21,2 25,7 Q29,4 31,7" stroke="#8BAFC4" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div class="timeline-body" style="min-height:420px">
+          <div class="timeline-line"></div>
+
+          <div class="timeline-nodes">
+
+            <!-- Node 1: RIGHT -->
+            <div class="tl-node right">
+              <div class="tl-card">
+                <div class="tl-date">2026年 3月</div>
+                <div class="tl-dots">
+                  <div class="tl-dot" style="background:var(--anxiety)"></div>
+                  <div class="tl-dot" style="background:var(--tired)"></div>
+                  <div class="tl-dot" style="background:var(--calm)"></div>
+                </div>
+                <div class="tl-quote">
+                  "说不清楚在焦虑什么，但肩膀很沉。也许只是开春了，身体还没反应过来。"
+                </div>
+                <button class="tl-view-btn">查看</button>
+              </div>
+              <div class="tl-center">
+                <div class="tl-circle" style="width:22px;height:22px;border-color:var(--anxiety);background:rgba(232,149,122,0.15)">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--anxiety)"></div>
+                </div>
+              </div>
+              <div style="flex:1"></div>
+            </div>
+
+            <!-- Node 2: LEFT -->
+            <div class="tl-node left">
+              <div style="flex:1"></div>
+              <div class="tl-center">
+                <div class="tl-circle" style="width:30px;height:30px;border-color:var(--joy);background:rgba(242,197,92,0.15)">
+                  <div style="width:12px;height:12px;border-radius:50%;background:var(--joy)"></div>
+                </div>
+              </div>
+              <div class="tl-card" style="text-align:right">
+                <div class="tl-date">2026年 2月 · 春节</div>
+                <div class="tl-dots" style="justify-content:flex-end">
+                  <div class="tl-dot" style="background:var(--joy)"></div>
+                  <div class="tl-dot" style="background:var(--excited)"></div>
+                  <div class="tl-dot" style="background:var(--calm)"></div>
+                </div>
+                <div class="tl-quote">
+                  "吃到了外婆的糯米饭。觉得有些东西一直在，就算我们很久没想起来。"
+                </div>
+                <div style="display:flex;justify-content:flex-end">
+                  <button class="tl-view-btn">查看</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 3: RIGHT -->
+            <div class="tl-node right">
+              <div class="tl-card">
+                <div class="tl-date">2026年 1月 · 年末</div>
+                <div class="tl-dots">
+                  <div class="tl-dot" style="background:var(--tired)"></div>
+                  <div class="tl-dot" style="background:var(--calm)"></div>
+                </div>
+                <div class="tl-quote">
+                  "年末总结了一下，做到了三件事，没做到两件。够了。"
+                </div>
+                <button class="tl-view-btn">查看</button>
+              </div>
+              <div class="tl-center">
+                <div class="tl-circle" style="width:18px;height:18px;border-color:var(--tired)">
+                  <div style="width:6px;height:6px;border-radius:50%;background:var(--tired)"></div>
+                </div>
+              </div>
+              <div style="flex:1"></div>
+            </div>
+
+            <!-- Node 4: LEFT -->
+            <div class="tl-node left">
+              <div style="flex:1"></div>
+              <div class="tl-center">
+                <div class="tl-circle" style="width:28px;height:28px;border-color:var(--excited);background:rgba(232,165,152,0.15)">
+                  <div style="width:10px;height:10px;border-radius:50%;background:var(--excited)"></div>
+                </div>
+              </div>
+              <div class="tl-card" style="text-align:right">
+                <div class="tl-date">2025年 12月 · 生日</div>
+                <div class="tl-dots" style="justify-content:flex-end">
+                  <div class="tl-dot" style="background:var(--excited)"></div>
+                  <div class="tl-dot" style="background:var(--joy)"></div>
+                </div>
+                <div class="tl-quote">
+                  "第一次独自在异乡过生日，意外地不孤单——因为我已经开始好好记录自己了。"
+                </div>
+                <div style="display:flex;justify-content:flex-end">
+                  <button class="tl-view-btn">查看</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div><!-- /desktop-dtimeline -->
+
+    <!-- ===== DESKTOP SCREEN 3: ANNUAL REPORT ===== -->
+    <div class="desktop-screen" id="desktop-annual" style="justify-content:center">
+      <div class="annual-report-wrap">
+
+        <div class="annual-preview-card">
+          <div class="annual-card-header">
+            <div class="annual-card-year">2025</div>
+            <div class="annual-card-title">高延清的故事</div>
+          </div>
+
+          <div class="annual-body">
+            <!-- Pie chart (SVG hand-drawn style) -->
+            <div class="annual-pie-area">
+              <div class="annual-pie-label">情绪分布</div>
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <!-- Hand-drawn pie segments using arcs -->
+                <!-- Joy 22% -->
+                <path d="M55,55 L55,12 A43,43 0 0,1 96,72 Z" fill="var(--joy)" opacity="0.85"/>
+                <!-- Calm 28% -->
+                <path d="M55,55 L96,72 A43,43 0 0,1 22,88 Z" fill="var(--calm)" opacity="0.85"/>
+                <!-- Anxiety 25% -->
+                <path d="M55,55 L22,88 A43,43 0 0,1 14,36 Z" fill="var(--anxiety)" opacity="0.85"/>
+                <!-- Tired 12% -->
+                <path d="M55,55 L14,36 A43,43 0 0,1 40,13 Z" fill="var(--tired)" opacity="0.85"/>
+                <!-- Sad 8% -->
+                <path d="M55,55 L40,13 A43,43 0 0,1 55,12 Z" fill="var(--sad)" opacity="0.85"/>
+                <!-- Slight wobble outline -->
+                <circle cx="55" cy="55" r="43" fill="none" stroke="var(--card-bg)" stroke-width="3"/>
+                <circle cx="55" cy="55" r="20" fill="var(--card-bg)"/>
+                <text x="55" y="59" text-anchor="middle" font-family="Caveat,cursive" font-size="11" fill="var(--text-muted)">365天</text>
+              </svg>
+            </div>
+
+            <!-- Stats bars -->
+            <div class="annual-stats">
+              <div class="annual-stat-row">
+                <div class="legend-circle" style="background:var(--calm);width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>
+                <span style="font-size:11px;color:var(--text-muted);width:28px">平静</span>
+                <div class="annual-stat-bar">
+                  <div class="annual-stat-fill" style="width:28%;background:var(--calm)"></div>
+                </div>
+                <div class="annual-stat-pct">28%</div>
+              </div>
+              <div class="annual-stat-row">
+                <div class="legend-circle" style="background:var(--anxiety);width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>
+                <span style="font-size:11px;color:var(--text-muted);width:28px">焦虑</span>
+                <div class="annual-stat-bar">
+                  <div class="annual-stat-fill" style="width:25%;background:var(--anxiety)"></div>
+                </div>
+                <div class="annual-stat-pct">25%</div>
+              </div>
+              <div class="annual-stat-row">
+                <div class="legend-circle" style="background:var(--joy);width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>
+                <span style="font-size:11px;color:var(--text-muted);width:28px">喜悦</span>
+                <div class="annual-stat-bar">
+                  <div class="annual-stat-fill" style="width:22%;background:var(--joy)"></div>
+                </div>
+                <div class="annual-stat-pct">22%</div>
+              </div>
+              <div class="annual-stat-row">
+                <div class="legend-circle" style="background:var(--tired);width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>
+                <span style="font-size:11px;color:var(--text-muted);width:28px">疲惫</span>
+                <div class="annual-stat-bar">
+                  <div class="annual-stat-fill" style="width:12%;background:var(--tired)"></div>
+                </div>
+                <div class="annual-stat-pct">12%</div>
+              </div>
+              <div class="annual-stat-row">
+                <div class="legend-circle" style="background:var(--excited);width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>
+                <span style="font-size:11px;color:var(--text-muted);width:28px">兴奋</span>
+                <div class="annual-stat-bar">
+                  <div class="annual-stat-fill" style="width:5%;background:var(--excited)"></div>
+                </div>
+                <div class="annual-stat-pct">5%</div>
+              </div>
+              <div class="annual-stat-row">
+                <div class="legend-circle" style="background:var(--sad);width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>
+                <span style="font-size:11px;color:var(--text-muted);width:28px">悲伤</span>
+                <div class="annual-stat-bar">
+                  <div class="annual-stat-fill" style="width:8%;background:var(--sad)"></div>
+                </div>
+                <div class="annual-stat-pct">8%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline preview strip -->
+          <div class="annual-timeline-preview">
+            <div class="annual-tl-label">全年情绪走势</div>
+            <div class="annual-tl-strip" id="annualStrip">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+
+          <!-- Sample: 高延清 -->
+          <div class="sample-section">
+            <div class="sample-section-label">✦ 查看真实样例</div>
+            <div class="sample-card" onclick="openSampleModal()">
+              <div class="sample-card-inner">
+                <div class="sample-portrait">高</div>
+                <div class="sample-info">
+                  <div class="sample-name">高延清 · 1940–2025</div>
+                  <div class="sample-desc">一位军人、诗人与父亲的人生长河<br>312天记录 · 47个人生节点</div>
+                </div>
+                <div class="sample-arrow">体验 →</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="annual-cta" onclick="showToast('正在生成你的 2025 年度故事...')">
+            生成我的故事 →
+          </button>
+
+        </div>
+
+        <!-- Small note below -->
+        <div style="font-family:var(--font-hand);font-size:13px;color:var(--text-light);text-align:center">
+          ✳ 基于 2025 年全年 312 天记录生成 &nbsp;·&nbsp; 长河陪伴了你 189 次对话
+        </div>
+
+      </div>
+    </div><!-- /desktop-annual -->
+
+    <!-- Desktop floating chat entry -->
+    <div class="desktop-chat-fab" onclick="showToast('正在打开长河对话...')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M2,13 Q1,16 4,15 L15,10 Q17,9 15,6 L9,2 Q7,1 5,4 L2,13Z" fill="none" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle cx="7.5" cy="8" r="1" fill="white"/>
+        <circle cx="10" cy="8" r="1" fill="white"/>
+        <circle cx="12.5" cy="8" r="1" fill="white"/>
+      </svg>
+      与长河对话
+    </div>
+  </div><!-- /desktop-section -->
+
+</div><!-- /demo-area -->
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+// ============================================
+// ARCHITECTURE PANEL
+// ============================================
+function toggleArch() {
+  const panel = document.getElementById('archPanel');
+  panel.classList.toggle('open');
+}
+
+// ============================================
+// PHONE SCREEN SWITCHING
+// ============================================
+function switchPhone(screen, btn) {
+  // Deactivate all screens
+  document.querySelectorAll('.phone-screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.phone-tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById('phone-' + screen).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ============================================
+// DESKTOP SCREEN SWITCHING
+// ============================================
+function switchDesktop(screen, btn) {
+  document.querySelectorAll('.desktop-screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.desktop-tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById('desktop-' + screen).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ============================================
+// CHAT INTERACTION
+// ============================================
+// Pre-defined AI responses for demo
+const aiResponses = [
+  "嗯，我听到了。\n\n你愿意多说一点吗？",
+  "这种感觉很真实。\n能告诉我，今天有没有一个小小的时刻，让你觉得稍微轻松一些？",
+  "谢谢你告诉我这些。\n\n有时候说出来本身就是一种释放。",
+  "我们把它记录下来吧。\n这也是你今天的一部分。",
+  "明白了。\n\n你今天照顾好自己了吗？吃饭了吗？"
+];
+let responseIdx = 0;
+
+function handleChatKey(e) {
+  if (e.key === 'Enter') sendChat();
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const msgs = document.getElementById('chatMessages');
+
+  // Add user message
+  const userDiv = document.createElement('div');
+  userDiv.className = 'msg-user';
+  userDiv.textContent = text;
+  msgs.appendChild(userDiv);
+  input.value = '';
+
+  // Scroll to bottom
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Show typing indicator after short delay
+  setTimeout(() => {
+    const typing = document.createElement('div');
+    typing.className = 'typing-indicator';
+    typing.id = 'typingIndicator';
+    typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    msgs.appendChild(typing);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // Replace with actual response after delay
+    setTimeout(() => {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+
+      const aiDiv = document.createElement('div');
+      aiDiv.className = 'msg-ai';
+      const response = aiResponses[responseIdx % aiResponses.length];
+      responseIdx++;
+      aiDiv.innerHTML = '<span class="ai-name">长河</span>' + response.replace(/\n/g, '<br>');
+      msgs.appendChild(aiDiv);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 1200 + Math.random() * 600);
+
+  }, 300);
+}
+
+// ============================================
+// EMOTION SELECTION
+// ============================================
+const emotionColors = {
+  joy: '#F2C55C', calm: '#78B5A8', anxiety: '#E8957A',
+  tired: '#8BAFC4', sad: '#B8A8C8', excited: '#E8A598'
+};
+
+function selectEmotion(btn) {
+  // Deselect all
+  document.querySelectorAll('.emotion-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.style.borderColor = '';
+    b.style.background = '';
+  });
+
+  // Select clicked
+  const emotion = btn.dataset.emotion;
+  btn.classList.add('selected');
+  const color = emotionColors[emotion];
+  btn.style.borderColor = color;
+  btn.style.background = color + '15'; // 15% opacity
+
+  // Update intensity dots color
+  document.querySelectorAll('.intensity-dot').forEach(d => {
+    d.style.borderColor = color;
+  });
+  document.querySelectorAll('.intensity-dot.filled').forEach(d => {
+    d.style.background = color;
+  });
+}
+
+// ============================================
+// INTENSITY SELECTION
+// ============================================
+let currentIntensity = 5; // default all filled
+
+function setIntensity(level) {
+  currentIntensity = level;
+  const dots = document.querySelectorAll('.intensity-dot');
+  dots.forEach((dot, idx) => {
+    if (idx < level) {
+      dot.classList.add('filled');
+      dot.style.background = ''; // will inherit from CSS or inline
+    } else {
+      dot.classList.remove('filled');
+      dot.style.background = 'transparent';
+    }
+  });
+}
+
+// ============================================
+// CHECK-IN SUBMIT
+// ============================================
+function submitCheckin() {
+  showToast('已记录 ✓ 今天的一笔');
+}
+
+// ============================================
+// TOAST
+// ============================================
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ============================================
+// CALENDAR GENERATION
+// ============================================
+// March 2026: starts on Sunday (day 0), but we use Mon-first
+// March 1, 2026 is a Sunday — in Mon-first grid, Sunday is column 6
+// So offset = 6 empty cells before day 1
+
+const calData = {
+  // day: { emotion, intensity (0.4-1.0), symbol, name }
+  1:  { e: 'calm',    i: 0.7,  s: '—',  n: '平静', note: '周末读了本书，难得的安静' },
+  2:  { e: 'joy',     i: 0.85, s: '★',  n: '喜悦', note: '朋友来访，吃了顿好饭' },
+  3:  { e: 'anxiety', i: 0.65, s: '∿',  n: '焦虑', note: '工作任务堆积，有点喘不过气' },
+  4:  { e: 'anxiety', i: 0.7,  s: '∿',  n: '焦虑', note: '说不清楚在焦虑什么，肩膀很沉' },
+};
+
+const emotionVarMap = {
+  joy: '#F2C55C', calm: '#78B5A8', anxiety: '#E8957A',
+  tired: '#8BAFC4', sad: '#B8A8C8', excited: '#E8A598'
+};
+
+const emotionNameMap = {
+  joy: '喜悦', calm: '平静', anxiety: '焦虑',
+  tired: '疲惫', sad: '悲伤', excited: '兴奋'
+};
+
+function buildCalendar() {
+  const container = document.getElementById('calDays');
+  // March 2026 starts on Sunday. Mon-first means Sunday = index 6
+  // offset = 6 empty cells
+  const offset = 6;
+  const daysInMonth = 31;
+  const today = 4; // March 4, 2026
+
+  // Empty offset cells
+  for (let i = 0; i < offset; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    container.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'cal-day';
+
+    const numEl = document.createElement('div');
+    numEl.className = 'cal-day-num';
+    numEl.textContent = d;
+
+    if (d <= today) {
+      // Past day — filled
+      dayEl.classList.add('past');
+      const data = calData[d];
+      const color = data ? emotionVarMap[data.e] : '#D8CFC4';
+      const opacity = data ? data.i : 0.3;
+      dayEl.style.background = hexAlpha(color, opacity);
+      dayEl.style.width = '100%';
+
+      const inner = document.createElement('div');
+      inner.className = 'cal-day-inner';
+      if (data) {
+        const symbol = document.createElement('span');
+        symbol.className = 'cal-day-symbol';
+        symbol.textContent = data.s;
+        inner.appendChild(symbol);
+      }
+      dayEl.appendChild(numEl);
+      dayEl.appendChild(inner);
+
+      // Tooltip
+      if (data) {
+        dayEl.addEventListener('mouseenter', (ev) => showCalTooltip(ev, d, data));
+        dayEl.addEventListener('mousemove', (ev) => moveCalTooltip(ev));
+        dayEl.addEventListener('mouseleave', hideCalTooltip);
+      }
+
+    } else {
+      // Future day — empty circle
+      dayEl.classList.add('future');
+      dayEl.appendChild(numEl);
+    }
+
+    container.appendChild(dayEl);
+  }
+}
+
+function hexAlpha(hex, alpha) {
+  // Convert hex color to rgba
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+const tooltip = document.getElementById('calTooltip');
+
+function showCalTooltip(ev, day, data) {
+  tooltip.textContent = `${day}日 · ${data.n} · ${Math.round(data.i * 10)}/10\n${data.note}`;
+  tooltip.classList.add('visible');
+  moveCalTooltip(ev);
+}
+
+function moveCalTooltip(ev) {
+  tooltip.style.left = (ev.clientX + 12) + 'px';
+  tooltip.style.top = (ev.clientY - 32) + 'px';
+}
+
+function hideCalTooltip() {
+  tooltip.classList.remove('visible');
+}
+
+// ============================================
+// ANNUAL TIMELINE STRIP
+// ============================================
+function buildAnnualStrip() {
+  const strip = document.getElementById('annualStrip');
+  const months = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+
+  // Heights representing emotion intensity patterns per month
+  const heights = [28, 35, 42, 38, 30, 45, 40, 36, 32, 48, 38, 30];
+  const colors = [
+    '#8BAFC4', '#E8957A', '#E8957A', '#78B5A8',
+    '#F2C55C', '#78B5A8', '#E8957A', '#B8A8C8',
+    '#78B5A8', '#F2C55C', '#E8957A', '#78B5A8'
+  ];
+
+  months.forEach((m, idx) => {
+    const monthDiv = document.createElement('div');
+    monthDiv.className = 'annual-tl-month';
+
+    const bar = document.createElement('div');
+    bar.className = 'annual-tl-bar';
+    bar.style.height = heights[idx] + 'px';
+    bar.style.background = colors[idx];
+    bar.style.opacity = '0.75';
+
+    const label = document.createElement('div');
+    label.className = 'annual-tl-month-label';
+    label.textContent = m + '月';
+
+    monthDiv.appendChild(bar);
+    monthDiv.appendChild(label);
+    strip.appendChild(monthDiv);
+  });
+}
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  buildCalendar();
+  buildAnnualStrip();
+});
+
+// ============================================
+// SAMPLE MODAL
+// ============================================
+function openSampleModal() {
+  document.getElementById('sampleModal').classList.add('open');
+}
+
+function closeSampleModal(event) {
+  if (!event || event.target === document.getElementById('sampleModal')) {
+    document.getElementById('sampleModal').classList.remove('open');
+  }
+}
+
+function openFullSample() {
+  closeSampleModal();
+  window.open('index.html', '_blank');
+}
+
+// ============================================
+// PHONE FAB: hide on chat screen
+// ============================================
+const _origSwitchPhone = window.switchPhone;
+window.switchPhone = function(screen, btn) {
+  if (typeof _origSwitchPhone === 'function') _origSwitchPhone(screen, btn);
+  const fab = document.getElementById('phoneFab');
+  if (fab) {
+    fab.classList.toggle('hidden', screen === 'chat');
+  }
+};
+
+// Init: hide FAB if starting on chat
+document.addEventListener('DOMContentLoaded', () => {
+  const fab = document.getElementById('phoneFab');
+  if (fab) fab.classList.add('hidden'); // chat is default screen
+});
+</script>
+
+</body>
+</html>

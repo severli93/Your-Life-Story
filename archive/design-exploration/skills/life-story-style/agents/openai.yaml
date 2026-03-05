@@ -1,0 +1,4 @@
+interface:
+  display_name: "Life Story Style"
+  short_description: "为人生页面提供可落地的视觉叙事风格与技术映射策略建议"
+  default_prompt: "Use $life-story-style to design a style matrix and implementation plan for my life-story page."

@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生命长河</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&family=Ma+Shan+Zheng&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════ */
+:root {
+  --void:     #07070D;
+  --deep:     #0D0D1A;
+  --surface:  #141424;
+  --surface2: #1C1C2E;
+  --gold:     #D4A853;
+  --gold-lt:  #ECC56A;
+  --gold-dim: rgba(212,168,83,.12);
+  --blush:    #FFB5A7;
+  --cream:    #FFF9F5;
+  --cream2:   #FFF4EE;
+  --text:     #EDE8E0;
+  --muted:    #A09888;
+  --dim:      #4A4A6A;
+  --border:   rgba(212,168,83,.15);
+  --f-display: 'Ma Shan Zheng', serif;
+  --f-body:    'Nunito', sans-serif;
+  --f-italic:  'EB Garamond', serif;
+  --ease:      cubic-bezier(.25,.46,.45,.94);
+  --spring:    cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--f-body);
+  background: var(--void);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: var(--f-body); border: none; }
+
+/* ══════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 60px;
+  background: rgba(7,7,13,.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212,168,83,.08);
+  transition: background .3s;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-display);
+  font-size: 20px;
+  letter-spacing: .04em;
+  color: var(--text);
+}
+.nav-logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
+  flex-shrink: 0;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: .03em;
+  transition: color .2s;
+}
+.nav-link:hover { color: var(--text); }
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+  color: var(--void);
+  border-radius: 30px;
+  padding: 9px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  transition: transform .15s var(--spring), box-shadow .15s;
+}
+.nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(212,168,83,.4);
+}
+.nav-mobile-cta { display: none; }
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 120px 32px 80px;
+}
+#starfield {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-glow-1 {
+  width: 700px; height: 700px;
+  background: radial-gradient(ellipse, rgba(212,168,83,.07) 0%, transparent 65%);
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+}
+.hero-glow-2 {
+  width: 500px; height: 400px;
+  background: radial-gradient(ellipse, rgba(180,120,200,.05) 0%, transparent 65%);
+  bottom: 0; right: -100px;
+}
+
+/* ── Floating life fragment cards ── */
+.fragments {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.frag {
+  position: absolute;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(212,168,83,.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  animation: fragFloat linear infinite;
+}
+.frag em { font-style: normal; color: var(--gold-lt); font-weight: 600; }
+.frag span { opacity: .6; }
+
+@keyframes fragFloat {
+  0%   { transform: translateY(0px) rotate(var(--rot)); opacity: var(--op); }
+  50%  { transform: translateY(-10px) rotate(var(--rot)); opacity: calc(var(--op) * 1.15); }
+  100% { transform: translateY(0px) rotate(var(--rot)); opacity: var(--op); }
+}
+
+/* ── Hero content ── */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 720px;
+}
+.hero-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp .8s var(--ease) .2s forwards;
+}
+.hero-label::before, .hero-label::after {
+  content: '';
+  width: 28px; height: 1px;
+  background: var(--gold);
+  opacity: .4;
+}
+.hero-title {
+  font-family: var(--f-display);
+  font-size: clamp(60px, 12vw, 112px);
+  line-height: 1.05;
+  letter-spacing: .02em;
+  background: linear-gradient(160deg, var(--text) 30%, var(--gold-lt) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp .9s var(--ease) .4s forwards;
+}
+.hero-tagline {
+  font-size: clamp(15px, 2.5vw, 18px);
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 480px;
+  margin: 0 auto 44px;
+  opacity: 0;
+  animation: fadeUp .9s var(--ease) .6s forwards;
+}
+.hero-tagline strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.hero-ctas {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp .9s var(--ease) .8s forwards;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%);
+  color: var(--void);
+  border-radius: 40px;
+  padding: 16px 38px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  transition: transform .2s var(--spring), box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.2), transparent);
+  border-radius: inherit;
+}
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(212,168,83,.45);
+}
+.btn-ghost {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--text);
+  border-radius: 40px;
+  padding: 15px 36px;
+  font-size: 15px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  transition: background .2s, border-color .2s, transform .2s var(--spring);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(212,168,83,.3);
+  transform: translateY(-2px);
+}
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: .12em;
+  animation: bounce 2.5s ease-in-out infinite;
+}
+.hero-scroll-hint svg { opacity: .4; }
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ══════════════════════════════════════════
+   SECTION BASE
+══════════════════════════════════════════ */
+section { position: relative; }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ══════════════════════════════════════════
+   3-STEP LOOP  (cream bg)
+══════════════════════════════════════════ */
+.steps {
+  background: var(--cream);
+  padding: 100px 32px;
+  color: #2A1E18;
+}
+.steps-header {
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto 64px;
+}
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: #C4873A;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--f-display);
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.2;
+  color: #1E140E;
+  margin-bottom: 14px;
+}
+.section-sub {
+  font-size: 16px;
+  color: #7A6560;
+  line-height: 1.75;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 52px;
+  left: calc(33.33% - 20px);
+  right: calc(33.33% - 20px);
+  height: 1px;
+  background: linear-gradient(to right, #D4A853, rgba(212,168,83,.3), #D4A853);
+}
+.step-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 32px;
+  position: relative;
+}
+.step-num {
+  width: 104px; height: 104px;
+  border-radius: 50%;
+  background: var(--cream2);
+  border: 1.5px solid rgba(212,168,83,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 4px 24px rgba(212,168,83,.08);
+  transition: transform .25s var(--spring), box-shadow .25s;
+}
+.step-card:hover .step-num {
+  transform: scale(1.06);
+  box-shadow: 0 8px 32px rgba(212,168,83,.15);
+}
+.step-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+.step-index {
+  position: absolute;
+  top: -6px; right: -6px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #C4873A;
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.step-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #C4873A;
+  margin-bottom: 10px;
+}
+.step-title {
+  font-family: var(--f-display);
+  font-size: 22px;
+  color: #1E140E;
+  margin-bottom: 10px;
+}
+.step-desc {
+  font-size: 14px;
+  color: #7A6560;
+  line-height: 1.75;
+}
+
+/* ══════════════════════════════════════════
+   SAMPLES
+══════════════════════════════════════════ */
+.samples {
+  background: var(--void);
+  padding: 100px 32px;
+}
+.samples-header {
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto 56px;
+}
+.samples-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+/* Sample card base */
+.sample-card {
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform .25s var(--spring), box-shadow .25s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.sample-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 64px rgba(0,0,0,.5);
+}
+
+/* Sample 1: 高延清 — dark gold epic */
+.sample-gao {
+  background: linear-gradient(160deg, #0D0B1A 0%, #181228 100%);
+  border: 1px solid rgba(212,168,83,.2);
+  padding: 36px 30px 30px;
+  min-height: 320px;
+}
+.sample-gao .s-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.sample-gao .s-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  border-radius: 20px;
+  padding: 5px 12px;
+  margin-bottom: 28px;
+}
+.sample-gao .s-name {
+  font-family: var(--f-display);
+  font-size: 34px;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.sample-gao .s-years {
+  font-family: var(--f-italic);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--gold);
+  opacity: .7;
+  margin-bottom: 16px;
+}
+.sample-gao .s-roles {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  margin-bottom: 24px;
+}
+.sample-gao .s-quote {
+  font-family: var(--f-italic);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgba(237,232,224,.55);
+  border-left: 2px solid rgba(212,168,83,.3);
+  padding-left: 14px;
+  margin-bottom: 28px;
+}
+.sample-gao .s-timeline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.s-year-chip {
+  font-size: 11px;
+  color: var(--gold);
+  border: 1px solid rgba(212,168,83,.2);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-weight: 600;
+}
+.sample-gao .s-cta {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 700;
+  border-top: 1px solid rgba(212,168,83,.1);
+}
+
+/* Sample 2: 小棠 — warm blush baby */
+.sample-tang {
+  background: linear-gradient(160deg, #FFF4F0 0%, #FFF8F5 100%);
+  border: 1.5px solid rgba(255,181,167,.4);
+  padding: 36px 30px 30px;
+  min-height: 320px;
+  color: #3D2218;
+}
+.sample-tang .s-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #C4603A;
+  border: 1px solid rgba(196,96,58,.2);
+  border-radius: 20px;
+  padding: 5px 12px;
+  margin-bottom: 28px;
+}
+.sample-tang .s-name {
+  font-family: var(--f-display);
+  font-size: 32px;
+  line-height: 1.1;
+  color: #3D2218;
+  margin-bottom: 6px;
+}
+.sample-tang .s-days {
+  font-size: 12px;
+  color: #C4603A;
+  font-weight: 700;
+  letter-spacing: .1em;
+  margin-bottom: 16px;
+}
+.sample-tang .milestones {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 24px;
+}
+.milestone-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #7A5040;
+}
+.milestone-day {
+  font-size: 11px;
+  font-weight: 700;
+  color: #C4603A;
+  background: rgba(196,96,58,.08);
+  border-radius: 8px;
+  padding: 3px 8px;
+  flex-shrink: 0;
+}
+.milestone-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(196,96,58,.3);
+  flex-shrink: 0;
+}
+.sample-tang .s-progress-bar {
+  background: rgba(255,181,167,.2);
+  border-radius: 4px;
+  height: 5px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.s-progress-fill {
+  height: 100%;
+  width: 72%;
+  background: linear-gradient(to right, #FFB5A7, #FF8F7A);
+  border-radius: 4px;
+}
+.sample-tang .s-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #C4603A;
+  font-weight: 700;
+  border-top: 1px solid rgba(196,96,58,.12);
+  padding-top: 20px;
+}
+
+/* Sample 3: 年度报告 — data/chart feel */
+.sample-annual {
+  background: linear-gradient(160deg, #0E1420 0%, #141E2C 100%);
+  border: 1px solid rgba(100,160,255,.15);
+  padding: 36px 30px 30px;
+  min-height: 320px;
+  position: relative;
+  overflow: hidden;
+}
+.sample-annual .coming-badge {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: rgba(100,160,255,.12);
+  border: 1px solid rgba(100,160,255,.3);
+  color: #80AAFF;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  border-radius: 20px;
+  padding: 5px 12px;
+}
+.sample-annual .s-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #80AAFF;
+  border: 1px solid rgba(100,160,255,.15);
+  border-radius: 20px;
+  padding: 5px 12px;
+  margin-bottom: 28px;
+}
+.sample-annual .s-name {
+  font-family: var(--f-body);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -.02em;
+}
+.sample-annual .s-sub {
+  font-size: 12px;
+  color: rgba(128,170,255,.6);
+  margin-bottom: 24px;
+  letter-spacing: .06em;
+}
+.mini-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 56px;
+  margin-bottom: 20px;
+}
+.bar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  opacity: .7;
+  transition: opacity .2s;
+}
+.sample-annual .stat-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.stat-pill {
+  background: rgba(100,160,255,.08);
+  border: 1px solid rgba(100,160,255,.15);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: rgba(237,232,224,.7);
+}
+.stat-pill strong { color: #80AAFF; }
+.sample-annual .s-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(100,160,255,.6);
+  font-weight: 700;
+  border-top: 1px solid rgba(100,160,255,.08);
+  padding-top: 20px;
+}
+
+/* ══════════════════════════════════════════
+   STORY TYPES
+══════════════════════════════════════════ */
+.types {
+  background: var(--deep);
+  padding: 100px 32px;
+  border-top: 1px solid rgba(212,168,83,.06);
+}
+.types-header {
+  text-align: center;
+  max-width: 540px;
+  margin: 0 auto 56px;
+}
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.type-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 18px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .25s var(--spring);
+}
+.type-card:hover {
+  background: var(--surface2);
+  border-color: rgba(212,168,83,.2);
+  transform: translateY(-4px);
+}
+.type-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.type-name {
+  font-family: var(--f-display);
+  font-size: 18px;
+  color: var(--text);
+}
+.type-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.type-arrow {
+  margin-top: auto;
+  font-size: 18px;
+  color: var(--dim);
+  transition: color .2s, transform .2s;
+}
+.type-card:hover .type-arrow { color: var(--gold); transform: translateX(3px); }
+
+/* ══════════════════════════════════════════
+   FINAL CTA
+══════════════════════════════════════════ */
+.finale {
+  background: var(--void);
+  padding: 120px 32px 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.finale-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(212,168,83,.06), transparent);
+  pointer-events: none;
+}
+.finale-content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.finale-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+.finale-title {
+  font-family: var(--f-display);
+  font-size: clamp(36px, 7vw, 64px);
+  line-height: 1.15;
+  background: linear-gradient(160deg, var(--text) 30%, var(--gold-lt) 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+.finale-sub {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 48px;
+}
+.finale-ctas {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.finale-note {
+  margin-top: 28px;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+.footer {
+  background: var(--void);
+  border-top: 1px solid rgba(255,255,255,.04);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--dim);
+}
+.footer-logo {
+  font-family: var(--f-display);
+  font-size: 16px;
+  color: var(--muted);
+}
+
+/* ══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE
+══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .samples-grid { grid-template-columns: 1fr; max-width: 480px; }
+  .types-grid { grid-template-columns: repeat(2, 1fr); }
+  .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+  .steps-grid::before { display: none; }
+}
+@media (max-width: 600px) {
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .nav-mobile-cta { display: block; }
+  .nav-cta { padding: 8px 18px; font-size: 12px; }
+  .hero { padding: 100px 20px 80px; }
+  .frag { display: none; }
+  .frag:nth-child(-n+2) { display: block; font-size: 11px; }
+  .steps { padding: 72px 20px; }
+  .samples { padding: 72px 20px; }
+  .types { padding: 72px 20px; }
+  .types-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .type-card { padding: 20px 18px; }
+  .finale { padding: 80px 20px 72px; }
+  .footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════
+     NAVBAR
+════════════════════ -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    生命长河
+  </a>
+  <div class="nav-links">
+    <a href="/story/gao-yanqing" class="nav-link">高延清样例</a>
+    <a href="/story/baby-growth" class="nav-link">小棠样例</a>
+    <a href="/companion" class="nav-link">开始对话</a>
+    <a href="/create" class="nav-cta">开始制作</a>
+  </div>
+  <a href="/create" class="nav-cta nav-mobile-cta">开始制作</a>
+</nav>
+
+
+<!-- ════════════════════
+     HERO
+════════════════════ -->
+<section class="hero">
+  <canvas id="starfield"></canvas>
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+
+  <!-- Floating memory fragments -->
+  <div class="fragments" aria-hidden="true">
+    <div class="frag" style="top:18%;left:5%;--rot:-4deg;--op:.65;animation-duration:6.4s;animation-delay:0s">
+      <em>第 1 天 ♡</em> <span>来到这个世界</span>
+    </div>
+    <div class="frag" style="top:26%;right:6%;--rot:3.5deg;--op:.5;animation-duration:7.2s;animation-delay:-2s">
+      <span>情绪温度</span> <em>8 / 10</em> <span>· 比较焦虑</span>
+    </div>
+    <div class="frag" style="top:68%;left:4%;--rot:2deg;--op:.45;animation-duration:8s;animation-delay:-1.5s">
+      <em>2024年11月</em> <span>· 47个记忆节点</span>
+    </div>
+    <div class="frag" style="top:72%;right:5%;--rot:-3deg;--op:.6;animation-duration:6.8s;animation-delay:-3s">
+      <span>第一次说</span> <em>「我爱你」</em>
+    </div>
+    <div class="frag" style="top:40%;left:2%;--rot:5deg;--op:.4;animation-duration:9s;animation-delay:-4s">
+      <em>军功章 No.349711</em> <span>· 1951年</span>
+    </div>
+    <div class="frag" style="top:50%;right:3%;--rot:-2.5deg;--op:.38;animation-duration:7.6s;animation-delay:-5s">
+      <span>📅 </span><em>2025年度报告</em> <span>生成中…</span>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-label">AI 生命记录伴侣</div>
+    <h1 class="hero-title">生命长河</h1>
+    <p class="hero-tagline">
+      有些时刻，值得被好好记录。<br>
+      长河陪你<strong>对话、沉淀</strong>，将散落的记忆，<br>
+      织成一部只属于你的<strong>人生可视化</strong>。
+    </p>
+    <div class="hero-ctas">
+      <a href="/companion" class="btn-primary">开始对话</a>
+      <a href="/story/gao-yanqing" class="btn-ghost">查看样例</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M7 2v10M3 8l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    向下探索
+  </div>
+</section>
+
+
+<!-- ════════════════════
+     3-STEP LOOP
+════════════════════ -->
+<section class="steps">
+  <div class="steps-header reveal">
+    <div class="section-eyebrow">如何运作</div>
+    <h2 class="section-title">对话，沉淀，可视化</h2>
+    <p class="section-sub">三个步骤，将日常的碎片，凝聚成完整的人生叙事。</p>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step-card reveal" style="transition-delay:.1s">
+      <div class="step-num">
+        <span class="step-index">1</span>
+        <span class="step-icon">💬</span>
+      </div>
+      <div class="step-label">对话</div>
+      <div class="step-title">长河陪伴</div>
+      <p class="step-desc">像跟老朋友聊天一样，说说今天的心情、突然想起的往事，或者难以言说的情绪。长河会用 A·I·R 方法引导你觉察感受。</p>
+    </div>
+
+    <div class="step-card reveal" style="transition-delay:.2s">
+      <div class="step-num">
+        <span class="step-index">2</span>
+        <span class="step-icon">🌊</span>
+      </div>
+      <div class="step-label">沉淀</div>
+      <div class="step-title">记忆成型</div>
+      <p class="step-desc">每一次对话，都自动提炼为带时间戳的记忆节点。日/周/月/年，粒度由你决定。过去的照片和日记，也可以一键导入。</p>
+    </div>
+
+    <div class="step-card reveal" style="transition-delay:.3s">
+      <div class="step-num">
+        <span class="step-index">3</span>
+        <span class="step-icon">✨</span>
+      </div>
+      <div class="step-label">可视化</div>
+      <div class="step-title">生成长河</div>
+      <p class="step-desc">积累的记忆，在你准备好时，生成一部可浏览、可分享的人生故事页。年度报告、成长记录、完整人生时间轴——你来选。</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════
+     SAMPLES
+════════════════════ -->
+<section class="samples">
+  <div class="samples-header reveal">
+    <div class="section-eyebrow" style="color:var(--gold)">真实样例</div>
+    <h2 class="section-title" style="color:var(--text)">看看别人的人生长河</h2>
+    <p class="section-sub" style="color:var(--muted)">每个人的故事，都有完全不同的样子。</p>
+  </div>
+
+  <div class="samples-grid">
+
+    <!-- 高延清 -->
+    <a href="/story/gao-yanqing" class="sample-card sample-gao reveal" style="transition-delay:.1s">
+      <div class="s-noise"></div>
+      <div class="s-tag">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+        完整人生
+      </div>
+      <div class="s-name">高延清</div>
+      <div class="s-years">1933 — 2024</div>
+      <div class="s-roles">军人 · 诗人 · 父亲</div>
+      <div class="s-quote">「时光荏苒，岁月如歌。回首往事，我所珍视的，是那些平凡而真实的瞬间。」</div>
+      <div class="s-timeline">
+        <span class="s-year-chip">1951 参军入朝</span>
+        <span class="s-year-chip">1979 转业</span>
+        <span class="s-year-chip">1994 开始创作</span>
+      </div>
+      <div class="s-cta">
+        <span>查看人生长河</span>
+        <span>→</span>
+      </div>
+    </a>
+
+    <!-- 小棠 -->
+    <a href="/story/baby-growth" class="sample-card sample-tang reveal" style="transition-delay:.2s">
+      <div class="s-tag">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+        婴儿成长
+      </div>
+      <div class="s-name">小棠的第一千天</div>
+      <div class="s-days">第 1 天 → 第 1095 天</div>
+      <div class="milestones">
+        <div class="milestone-row">
+          <span class="milestone-day">第 47 天</span>
+          <span class="milestone-dot"></span>
+          第一次微笑
+        </div>
+        <div class="milestone-row">
+          <span class="milestone-day">第 312 天</span>
+          <span class="milestone-dot"></span>
+          第一步
+        </div>
+        <div class="milestone-row">
+          <span class="milestone-day">第 1095 天</span>
+          <span class="milestone-dot"></span>
+          「妈妈，我爱你」
+        </div>
+      </div>
+      <div class="s-progress-bar">
+        <div class="s-progress-fill"></div>
+      </div>
+      <div class="s-cta">
+        <span>自动播放故事</span>
+        <span>▶</span>
+      </div>
+    </a>
+
+    <!-- 年度报告 -->
+    <div class="sample-card sample-annual reveal" style="transition-delay:.3s;cursor:default">
+      <div class="coming-badge">即将上线</div>
+      <div class="s-tag">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+        年度报告
+      </div>
+      <div class="s-name">2025 年度报告</div>
+      <div class="s-sub">像 Spotify Wrapped，但是你的人生</div>
+      <div class="mini-chart" aria-hidden="true">
+        <div class="bar" style="height:30%;background:#3A6BC4"></div>
+        <div class="bar" style="height:55%;background:#4A7BDA"></div>
+        <div class="bar" style="height:40%;background:#3A6BC4"></div>
+        <div class="bar" style="height:75%;background:#80AAFF"></div>
+        <div class="bar" style="height:60%;background:#4A7BDA"></div>
+        <div class="bar" style="height:85%;background:#80AAFF"></div>
+        <div class="bar" style="height:50%;background:#4A7BDA"></div>
+        <div class="bar" style="height:70%;background:#80AAFF"></div>
+        <div class="bar" style="height:45%;background:#3A6BC4"></div>
+        <div class="bar" style="height:95%;background:#A0C0FF"></div>
+        <div class="bar" style="height:65%;background:#80AAFF"></div>
+        <div class="bar" style="height:80%;background:#A0C0FF"></div>
+      </div>
+      <div class="stat-pills">
+        <div class="stat-pill"><strong>312</strong> 天记录</div>
+        <div class="stat-pill"><strong>焦虑→平静</strong> 主旋律</div>
+        <div class="stat-pill"><strong>47</strong> 个成长时刻</div>
+      </div>
+      <div class="s-cta" style="color:rgba(100,160,255,.4)">
+        <span>加入候补名单</span>
+        <span>→</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════
+     STORY TYPES
+════════════════════ -->
+<section class="types">
+  <div class="types-header reveal">
+    <div class="section-eyebrow" style="color:var(--gold)">故事类型</div>
+    <h2 class="section-title" style="color:var(--text)">选择你的记录方式</h2>
+  </div>
+
+  <div class="types-grid">
+    <div class="type-card reveal" style="transition-delay:.05s" onclick="location.href='/create?type=annual'">
+      <div class="type-icon" style="background:rgba(212,168,83,.1)">📅</div>
+      <div class="type-name">年度回顾</div>
+      <p class="type-desc">365天的喜怒哀乐，浓缩成一份专属年度报告，像 Spotify Wrapped。</p>
+      <div class="type-arrow">→</div>
+    </div>
+
+    <div class="type-card reveal" style="transition-delay:.1s" onclick="location.href='/create?type=love'">
+      <div class="type-icon" style="background:rgba(255,181,167,.1)">♡</div>
+      <div class="type-name">爱情故事</div>
+      <p class="type-desc">从初见到相伴，记录两人之间每一个让你心跳的瞬间。</p>
+      <div class="type-arrow">→</div>
+    </div>
+
+    <div class="type-card reveal" style="transition-delay:.15s" onclick="location.href='/create?type=growth'">
+      <div class="type-icon" style="background:rgba(168,230,195,.1)">🌱</div>
+      <div class="type-name">成长记录</div>
+      <p class="type-desc">从孩提到今日，一段蜕变之旅。见证你如何在时光中生长。</p>
+      <div class="type-arrow">→</div>
+    </div>
+
+    <div class="type-card reveal" style="transition-delay:.2s" onclick="location.href='/create?type=family'">
+      <div class="type-icon" style="background:rgba(163,196,255,.1)">🏡</div>
+      <div class="type-name">家族传记</div>
+      <p class="type-desc">父母、祖辈的故事值得被好好留住，留给未来的孩子阅读。</p>
+      <div class="type-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════
+     FINAL CTA
+════════════════════ -->
+<section class="finale">
+  <div class="finale-glow"></div>
+  <div class="finale-content">
+    <div class="finale-label reveal">开始你的旅程</div>
+    <h2 class="finale-title reveal" style="transition-delay:.1s">
+      记录属于你的<br>生命长河
+    </h2>
+    <p class="finale-sub reveal" style="transition-delay:.2s">
+      每段生命都值得被好好记录。<br>
+      游客身份即可体验全部功能，随时开始。
+    </p>
+    <div class="finale-ctas reveal" style="transition-delay:.3s">
+      <a href="/companion" class="btn-primary">立即开始对话</a>
+      <a href="/create" class="btn-ghost">直接上传素材生成</a>
+    </div>
+    <p class="finale-note reveal" style="transition-delay:.4s">
+      无需注册 · 游客可用 · 生成报告时获取 Token
+    </p>
+  </div>
+</section>
+
+
+<!-- ════════════════════
+     FOOTER
+════════════════════ -->
+<footer class="footer">
+  <span class="footer-logo">生命长河</span>
+  <span>用 AI 让每段生命被好好记录</span>
+</footer>
+
+
+<!-- ════════════════════
+     SCRIPTS
+════════════════════ -->
+<script>
+/* ── Starfield ── */
+(function() {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [], W, H, raf;
+
+  function init() {
+    W = canvas.width  = innerWidth;
+    H = canvas.height = innerHeight;
+    stars = [];
+    const n = Math.floor(W * H / 4200);
+    for (let i = 0; i < n; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.2 + .15,
+        op: Math.random() * .5 + .1,
+        tw: Math.random() * Math.PI * 2,
+        ts: Math.random() * .012 + .003,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      s.tw += s.ts;
+      const op = s.op + Math.sin(s.tw) * .2;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(212,185,140,${op})`;
+      ctx.fill();
+    });
+    raf = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(raf);
+    init();
+    draw();
+  });
+
+  init();
+  draw();
+})();
+
+/* ── Scroll reveal ── */
+(function() {
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(el => obs.observe(el));
+})();
+
+/* ── Navbar scroll tint ── */
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.nav');
+  if (window.scrollY > 40) {
+    nav.style.background = 'rgba(7,7,13,.92)';
+  } else {
+    nav.style.background = 'rgba(7,7,13,.72)';
+  }
+}, { passive: true });
+</script>
+</body>
+</html>
