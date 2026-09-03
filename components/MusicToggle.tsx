@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { withBase } from "@/lib/basePath";
 
 export default function MusicToggle() {
     const [on, setOn] = useState(false);
@@ -8,8 +9,14 @@ export default function MusicToggle() {
 
     useEffect(() => {
         // initialize audio
-        // Peaceful ambient piano — Suno CDN (Peaceful Serenity by @blendfactor)
-        audioRef.current = new Audio("https://cdn1.suno.ai/74ad1d6e-7d17-4530-afa0-b3df47f1ee89.mp3");
+        // Self-hosted theme first (loads without外网); fall back to the Suno CDN
+        // track (Peaceful Serenity by @blendfactor) if the local file is missing.
+        const audio = new Audio(withBase("/assets/audio/gao-theme.mp3"));
+        audio.onerror = () => {
+            audio.onerror = null;
+            audio.src = "https://cdn1.suno.ai/74ad1d6e-7d17-4530-afa0-b3df47f1ee89.mp3";
+        };
+        audioRef.current = audio;
         audioRef.current.loop = true;
         audioRef.current.volume = 0.28;
 

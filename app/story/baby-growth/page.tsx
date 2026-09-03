@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/lib/basePath";
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import ShareModal, { type ShareCardData } from "@/components/ShareModal";
@@ -635,7 +636,7 @@ function MilestoneChapter({
         {chapter.image && (
           <div style={{ margin: "0 auto 32px", width: "100%", maxWidth: 360, borderRadius: 20, overflow: "hidden", boxShadow: "0 16px 40px rgba(0,0,0,0.12)" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={chapter.image} alt={chapter.title} style={{ width: "100%", height: "auto", display: "block", aspectRatio: "1 / 1", objectFit: "cover" }} />
+            <img src={withBase(chapter.image)} alt={chapter.title} style={{ width: "100%", height: "auto", display: "block", aspectRatio: "1 / 1", objectFit: "cover" }} />
           </div>
         )}
 
@@ -819,7 +820,7 @@ function StatsChapter({
         {chapter.image && (
           <div style={{ margin: "0 auto 32px", width: "100%", maxWidth: 360, borderRadius: 20, overflow: "hidden", boxShadow: "0 16px 40px rgba(0,0,0,0.12)" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={chapter.image} alt={chapter.title} style={{ width: "100%", height: "auto", display: "block", aspectRatio: "1 / 1", objectFit: "cover" }} />
+            <img src={withBase(chapter.image)} alt={chapter.title} style={{ width: "100%", height: "auto", display: "block", aspectRatio: "1 / 1", objectFit: "cover" }} />
           </div>
         )}
 

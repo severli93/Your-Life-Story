@@ -129,3 +129,14 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 220px;
 }
+
+/* ── Navbar on narrow screens ────────────────────────────────────────────────
+   The nav is laid out with inline styles; these overrides keep the brand on
+   one line and drop the text links (they're reachable from the home page). */
+.lc-nav-brand span { white-space: nowrap; }
+@media (max-width: 640px) {
+  .lc-nav { padding: 0 16px !important; }
+  .lc-nav-links { gap: 12px !important; padding-right: 0 !important; }
+  .lc-nav-links a { display: none; }
+  .lc-nav-links button { padding: 6px 14px !important; white-space: nowrap; }
+}

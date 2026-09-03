@@ -1,5 +1,6 @@
 "use client";
 
+import { withBase } from "@/lib/basePath";
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ShareModal, { type ShareCardData } from "@/components/ShareModal";
@@ -246,7 +247,7 @@ export default function CompanionPage() {
     const replyId = (Date.now() + 1).toString();
     try {
       abortRef.current = new AbortController();
-      const resp = await fetch("/api/chat", {
+      const resp = await fetch(withBase("/api/chat"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: apiMsgs }),

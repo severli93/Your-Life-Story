@@ -19,7 +19,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={{
+    <nav className="lc-nav" style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 500,
       display: "flex", alignItems: "center", justifyContent: "space-between",
       padding: "0 48px", height: 60,
@@ -30,7 +30,7 @@ export default function Navbar() {
       transition: "background .3s, border-color .3s",
     }}>
       {/* Logo */}
-      <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}>
+      <Link href="/" className="lc-nav-brand" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{
           width: 7, height: 7, borderRadius: "50%",
           background: "var(--nav-link-hover)",
@@ -48,7 +48,7 @@ export default function Navbar() {
 
       {/* Right side */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{ display: "flex", gap: 28, alignItems: "center", paddingRight: 8 }}>
+        <div className="lc-nav-links" style={{ display: "flex", gap: 28, alignItems: "center", paddingRight: 8 }}>
           <NavLink href="/#samples">生命之书</NavLink>
           <NavLink href="/companion">长河对话</NavLink>
           <button
