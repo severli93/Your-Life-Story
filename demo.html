@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>觉 · Jué</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #F6F3EE;
+  --surface:     #EDEAE3;
+  --surface-2:   #E4E0D8;
+  --white:       #FDFBF8;
+  --text:        #2A2723;
+  --text-2:      #7A756E;
+  --text-3:      #B0AA9F;
+  --accent:      #5E85A0;
+  --accent-2:    #EBF1F5;
+  --accent-warm: #A07860;
+  --border:      #DEDAD2;
+  --sidebar-w:   228px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { cursor: pointer; font-family: inherit; }
+textarea { font-family: inherit; }
+
+/* ── VIEWS ─────────────────────────────────────────────── */
+.view { display: none; width: 100%; height: 100vh; }
+.view.active { display: flex; }
+
+/* ══════════════════════════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════════════════════════ */
+#onboarding {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle paper grain */
+#onboarding::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.ob-logo {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 96px;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -2px;
+  opacity: 0;
+  animation: riseIn 1s cubic-bezier(.16,1,.3,1) 0.1s forwards;
+}
+
+.ob-tagline {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-2);
+  letter-spacing: 0.08em;
+  margin-top: 10px;
+  margin-bottom: 52px;
+  opacity: 0;
+  animation: riseIn 1s cubic-bezier(.16,1,.3,1) 0.25s forwards;
+}
+
+.ob-cards {
+  display: flex;
+  gap: 14px;
+  opacity: 0;
+  animation: riseIn 1s cubic-bezier(.16,1,.3,1) 0.4s forwards;
+}
+
+.ob-card {
+  width: 196px;
+  padding: 28px 24px 26px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.ob-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(94,133,160,0.1);
+}
+
+.ob-card-icon {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.ob-card-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 7px;
+}
+
+.ob-card-desc {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+
+.ob-skip {
+  margin-top: 36px;
+  font-size: 12px;
+  color: var(--text-3);
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 4px;
+  transition: color 0.15s;
+  opacity: 0;
+  animation: riseIn 1s cubic-bezier(.16,1,.3,1) 0.55s forwards;
+}
+.ob-skip:hover { color: var(--text-2); }
+
+
+/* ══════════════════════════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════════════════════════ */
+#app { flex-direction: row; }
+
+/* ── SIDEBAR ─────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  height: 100vh;
+}
+
+.sb-logo {
+  padding: 18px 20px 16px;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 32px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.sb-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sb-nav-btn {
+  flex: 1;
+  padding: 9px 0;
+  background: none;
+  border: none;
+  font-size: 11.5px;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+  border-bottom: 1.5px solid transparent;
+  margin-bottom: -1px;
+}
+.sb-nav-btn:hover { color: var(--text); }
+.sb-nav-btn.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+.sb-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 0 8px;
+}
+
+.tree-yr {
+  padding: 6px 20px 2px;
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.tree-mo {
+  padding: 4px 20px 4px 30px;
+  font-size: 12.5px;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: color 0.15s, background 0.15s;
+  border-radius: 0;
+}
+.tree-mo:hover { color: var(--text); background: rgba(0,0,0,0.03); }
+.tree-mo.on { color: var(--accent); }
+.tree-mo::before {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.tree-wk {
+  padding: 2px 20px 2px 46px;
+  font-size: 11.5px;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.tree-wk:hover { color: var(--text-2); }
+
+.sb-heatmap {
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sb-hm-label {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.hm-grid {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 3px;
+}
+
+.hm-cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--surface);
+}
+
+/* ── MAIN ─────────────────────────────── */
+.main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+.panel.on { display: flex; }
+
+
+/* ══════════════════════════════════════════════════════════
+   CHAT PANEL
+══════════════════════════════════════════════════════════ */
+.chat-hdr {
+  padding: 13px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.chat-date {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+
+.chat-msgs {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  scroll-behavior: smooth;
+}
+
+/* message */
+.msg {
+  max-width: 68%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0;
+  animation: fadeSlide 0.35s ease forwards;
+}
+.msg-ai { align-self: flex-start; }
+.msg-usr { align-self: flex-end; }
+
+.msg-bubble {
+  padding: 13px 17px;
+  font-size: 14px;
+  line-height: 1.78;
+}
+
+.msg-ai .msg-bubble {
+  background: var(--accent-2);
+  color: var(--text);
+  border-left: 2.5px solid var(--accent);
+}
+
+.msg-usr .msg-bubble {
+  background: transparent;
+  color: var(--text);
+  border-right: 2.5px solid var(--surface-2);
+  text-align: right;
+}
+
+.msg-time {
+  font-size: 10px;
+  color: var(--text-3);
+  padding: 0 3px;
+}
+.msg-usr .msg-time { text-align: right; }
+
+/* typing dots */
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 13px 17px;
+  background: var(--accent-2);
+  border-left: 2.5px solid var(--accent);
+  width: fit-content;
+}
+.typing-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.6;
+  animation: bob 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* emotion bar */
+.emo-bar {
+  padding: 10px 44px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-shrink: 0;
+}
+
+.emo-label {
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.emo-segs {
+  display: flex;
+  gap: 3px;
+}
+
+.emo-seg {
+  width: 13px;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--surface-2);
+  transition: background 0.6s ease;
+}
+.emo-seg.lit { background: var(--accent); }
+
+.emo-status {
+  font-size: 11px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+/* input */
+.chat-input-wrap {
+  padding: 14px 44px 22px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.chat-ta {
+  flex: 1;
+  padding: 11px 15px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--white);
+  border: 1px solid var(--border);
+  outline: none;
+  resize: none;
+  min-height: 44px;
+  max-height: 110px;
+  line-height: 1.55;
+  transition: border-color 0.2s;
+}
+.chat-ta:focus { border-color: var(--accent); }
+.chat-ta::placeholder { color: var(--text-3); }
+
+.send-btn {
+  padding: 0 22px;
+  height: 44px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.send-btn:hover { opacity: 0.85; }
+
+
+/* ══════════════════════════════════════════════════════════
+   TIMELINE PANEL
+══════════════════════════════════════════════════════════ */
+.tl-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 36px 52px 48px;
+}
+
+.tl-hdr { margin-bottom: 40px; }
+
+.tl-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.tl-sub {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.tl-yr-section { margin-bottom: 36px; }
+
+.tl-yr-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tl-yr-label {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  color: var(--text-3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tl-yr-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* year summary card */
+.yr-card {
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.yr-card-head {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.yr-card-body {
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.9;
+}
+
+/* entry */
+.tl-entry {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.tl-spine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 12px;
+  padding-top: 5px;
+  flex-shrink: 0;
+}
+
+.tl-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.tl-vline {
+  width: 1px;
+  flex: 1;
+  background: var(--border);
+  margin-top: 5px;
+}
+
+.tl-card {
+  flex: 1;
+  padding: 16px 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  transition: border-color 0.18s;
+  margin-bottom: 4px;
+}
+
+.tl-card:hover { border-color: var(--accent); }
+.tl-card.open { border-color: var(--accent); }
+
+.tl-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.tl-month {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.tl-tags { display: flex; gap: 5px; }
+
+.tl-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: var(--accent-2);
+  color: var(--accent);
+  border-radius: 20px;
+}
+
+.tl-quote {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.75;
+}
+
+.tl-expand {
+  display: none;
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+}
+
+.tl-card.open .tl-expand { display: block; }
+
+.tl-expand-body {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+.tl-ai-note {
+  font-size: 12.5px;
+  color: var(--accent);
+  font-style: italic;
+  line-height: 1.7;
+  padding: 9px 14px;
+  background: var(--accent-2);
+  border-left: 2px solid var(--accent);
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   INSIGHT PANEL
+══════════════════════════════════════════════════════════ */
+.ins-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 36px 52px 48px;
+}
+
+.ins-hdr { margin-bottom: 28px; }
+
+.ins-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+.ins-sub {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.ai-obs {
+  padding: 18px 22px;
+  background: var(--accent-2);
+  border-left: 3px solid var(--accent);
+  margin-bottom: 28px;
+}
+
+.ai-obs-lbl {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.ai-obs-txt {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.85;
+}
+
+.ins-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.ins-card {
+  padding: 22px 24px;
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+
+.ins-card.wide { grid-column: 1 / -1; }
+
+.ins-card-lbl {
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  color: var(--text-3);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* bar chart */
+.bar-chart { display: flex; flex-direction: column; gap: 11px; }
+
+.bar-row { display: flex; align-items: center; gap: 10px; }
+
+.bar-lbl {
+  font-size: 12px;
+  color: var(--text-2);
+  width: 32px;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 5px;
+  background: var(--surface);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  transition: width 1s cubic-bezier(.16,1,.3,1);
+}
+
+.bar-pct {
+  font-size: 11px;
+  color: var(--text-3);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* day bars */
+.day-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 80px;
+  padding-bottom: 0;
+}
+
+.day-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.day-fill {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+  transition: height 1s cubic-bezier(.16,1,.3,1);
+}
+
+.day-lbl {
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+/* trigger list */
+.trigger-list { display: flex; flex-direction: column; gap: 9px; }
+
+.trigger-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.trigger-item::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════════════ */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bob {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     VIEW 1: ONBOARDING
+══════════════════════════════════════════════════════════ -->
+<div id="v-onboard" class="view active">
+  <div class="ob-logo">觉</div>
+  <div class="ob-tagline">你好，我是觉。一个帮你听见自己的伴侣。</div>
+  <div class="ob-cards">
+    <div class="ob-card" onclick="goChat()">
+      <span class="ob-card-icon">🗂</span>
+      <div class="ob-card-title">整理过去的记忆</div>
+      <div class="ob-card-desc">生成人生时间轴<br>回顾过去，连接现在</div>
+    </div>
+    <div class="ob-card" onclick="goChat()">
+      <span class="ob-card-icon">📔</span>
+      <div class="ob-card-title">从现在开始记录</div>
+      <div class="ob-card-desc">日 · 周 · 月 · 年<br>选择你的记录频率</div>
+    </div>
+  </div>
+  <div class="ob-skip" onclick="goChat()">也可以先聊聊</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     VIEW 2: APP
+══════════════════════════════════════════════════════════ -->
+<div id="v-app" class="view">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">觉</div>
+    <div class="sb-nav">
+      <button class="sb-nav-btn on" onclick="showPanel('chat',this)">对话</button>
+      <button class="sb-nav-btn"   onclick="showPanel('timeline',this)">时间轴</button>
+      <button class="sb-nav-btn"   onclick="showPanel('insight',this)">洞察</button>
+    </div>
+    <div class="sb-tree">
+      <div class="tree-yr">2026</div>
+      <div class="tree-mo on">3月</div>
+      <div class="tree-wk">本周</div>
+      <div class="tree-wk">上周</div>
+      <div class="tree-mo">2月</div>
+      <div class="tree-wk">第8周</div>
+      <div class="tree-wk">第7周</div>
+      <div class="tree-yr" style="margin-top:10px">2025</div>
+      <div class="tree-mo">12月</div>
+      <div class="tree-mo">11月</div>
+      <div class="tree-mo" style="color:var(--text-3)">···</div>
+    </div>
+    <div class="sb-heatmap">
+      <div class="sb-hm-label">近28天情绪</div>
+      <div class="hm-grid" id="hmGrid"></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ── CHAT ── -->
+    <div id="p-chat" class="panel on">
+      <div class="chat-hdr">
+        <div class="chat-date">2026年3月4日 &nbsp;·&nbsp; 星期三</div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="emo-bar">
+        <div class="emo-label">情绪温度</div>
+        <div class="emo-segs" id="emoSegs"></div>
+        <div class="emo-status" id="emoStatus"></div>
+      </div>
+      <div class="chat-input-wrap">
+        <div class="input-row">
+          <textarea class="chat-ta" id="chatTa" placeholder="此刻的心情..." rows="1"
+            onkeydown="onKey(event)" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" onclick="send()">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TIMELINE ── -->
+    <div id="p-timeline" class="panel">
+      <div class="tl-wrap">
+        <div class="tl-hdr">
+          <div class="tl-title">人生时间轴</div>
+          <div class="tl-sub">每一个节点，都是你曾经的样子</div>
+        </div>
+
+        <!-- 2026 -->
+        <div class="tl-yr-section">
+          <div class="tl-yr-row">
+            <div class="tl-yr-label">2026</div>
+            <div class="tl-yr-line"></div>
+          </div>
+
+          <div class="tl-entry" onclick="toggleTl(this)">
+            <div class="tl-spine"><div class="tl-dot"></div><div class="tl-vline"></div></div>
+            <div class="tl-card">
+              <div class="tl-meta">
+                <div class="tl-month">3月</div>
+                <div class="tl-tags"><span class="tl-tag">焦虑</span><span class="tl-tag">期待</span></div>
+              </div>
+              <div class="tl-quote">「开始了一个新项目，既兴奋又害怕失败」</div>
+              <div class="tl-expand">
+                <div class="tl-expand-body">这个月你三次提到"不确定感"，同时也有对新事物的期待。两种情绪并存，说明你正在做一件让你真正在意的事。</div>
+                <div class="tl-ai-note">觉的观察：焦虑和期待常常是一体两面。你在意的越深，两边都会越强。这不是矛盾，是你认真的证明。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-entry" onclick="toggleTl(this)">
+            <div class="tl-spine"><div class="tl-dot"></div><div class="tl-vline"></div></div>
+            <div class="tl-card">
+              <div class="tl-meta">
+                <div class="tl-month">2月</div>
+                <div class="tl-tags"><span class="tl-tag">平静</span><span class="tl-tag">反思</span></div>
+              </div>
+              <div class="tl-quote">「一段比较慢的时期，有种说不清楚的沉淀感」</div>
+              <div class="tl-expand">
+                <div class="tl-expand-body">整体情绪温度偏低（月均3.2），以平静为主。你多次提到想"想清楚"某些事情，但又说不出具体是什么。</div>
+                <div class="tl-ai-note">觉的观察：沉淀不是停滞。有时候需要先慢下来，才能看清楚下一步要往哪里走。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2025 -->
+        <div class="tl-yr-section">
+          <div class="tl-yr-row">
+            <div class="tl-yr-label">2025</div>
+            <div class="tl-yr-line"></div>
+          </div>
+
+          <div class="tl-entry" onclick="toggleTl(this)">
+            <div class="tl-spine"><div class="tl-dot"></div><div class="tl-vline"></div></div>
+            <div class="tl-card">
+              <div class="tl-meta">
+                <div class="tl-month">12月</div>
+                <div class="tl-tags"><span class="tl-tag">疲惫</span><span class="tl-tag">成就感</span></div>
+              </div>
+              <div class="tl-quote">「年底冲刺，累到麻木，但是交付那一刻很爽」</div>
+              <div class="tl-expand">
+                <div class="tl-expand-body">情绪温度在交付前达到7-8（高压），交付后骤降至2（疲惫后的空洞）。这种大起大落的模式在你的记录里出现过三次。</div>
+                <div class="tl-ai-note">觉的观察：你在高压下的韧性很强。但交付后的那种"空洞感"值得多照顾自己——它常常被忽略。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2024 年卡 -->
+        <div class="tl-yr-section">
+          <div class="tl-yr-row">
+            <div class="tl-yr-label">2024</div>
+            <div class="tl-yr-line"></div>
+          </div>
+          <div class="yr-card">
+            <div class="yr-card-head">2024 年度摘要</div>
+            <div class="yr-card-body">
+              主题：过渡期 &nbsp;·&nbsp; 情绪主色调：焦虑 / 期待<br>
+              全年情绪均温：5.1 &nbsp;·&nbsp; 最高频触发器：工作变化、人际关系<br>
+              核心词：不确定、渴望改变、害怕犯错
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── INSIGHT ── -->
+    <div id="p-insight" class="panel">
+      <div class="ins-wrap">
+        <div class="ins-hdr">
+          <div class="ins-title">本周情绪报告</div>
+          <div class="ins-sub">2026年 第9周 &nbsp;·&nbsp; 3月2日 — 3月8日</div>
+        </div>
+
+        <div class="ai-obs">
+          <div class="ai-obs-lbl">觉 · 观察</div>
+          <div class="ai-obs-txt">你本周多次提到"说不清楚"——不清楚焦虑的来源，不清楚自己想要什么。这种模糊感本身值得关注。它有时候是在说：有什么事情，你还没准备好面对。</div>
+        </div>
+
+        <div class="ins-grid">
+          <div class="ins-card">
+            <div class="ins-card-lbl">情绪分布</div>
+            <div class="bar-chart">
+              <div class="bar-row">
+                <div class="bar-lbl">焦虑</div>
+                <div class="bar-track"><div class="bar-fill" style="width:42%"></div></div>
+                <div class="bar-pct">42%</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-lbl">平静</div>
+                <div class="bar-track"><div class="bar-fill" style="width:28%;opacity:.55"></div></div>
+                <div class="bar-pct">28%</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-lbl">疲惫</div>
+                <div class="bar-track"><div class="bar-fill" style="width:18%;opacity:.4"></div></div>
+                <div class="bar-pct">18%</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-lbl">喜悦</div>
+                <div class="bar-track"><div class="bar-fill" style="width:12%;opacity:.35"></div></div>
+                <div class="bar-pct">12%</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ins-card">
+            <div class="ins-card-lbl">情绪触发器</div>
+            <div class="trigger-list">
+              <div class="trigger-item">工作截止日期</div>
+              <div class="trigger-item">深夜独处时</div>
+              <div class="trigger-item">他人的评价</div>
+              <div class="trigger-item">与某人的对话</div>
+            </div>
+          </div>
+
+          <div class="ins-card wide">
+            <div class="ins-card-lbl">情绪走势（本周）</div>
+            <div class="day-chart">
+              <div class="day-col">
+                <div class="day-fill" style="height:50%"></div>
+                <div class="day-lbl">周一</div>
+              </div>
+              <div class="day-col">
+                <div class="day-fill" style="height:30%;opacity:.5"></div>
+                <div class="day-lbl">周二</div>
+              </div>
+              <div class="day-col">
+                <div class="day-fill" style="height:42%"></div>
+                <div class="day-lbl">周三</div>
+              </div>
+              <div class="day-col">
+                <div class="day-fill" style="height:68%"></div>
+                <div class="day-lbl">周四</div>
+              </div>
+              <div class="day-col">
+                <div class="day-fill" style="height:78%"></div>
+                <div class="day-lbl">周五</div>
+              </div>
+              <div class="day-col">
+                <div class="day-fill" style="height:26%;opacity:.5"></div>
+                <div class="day-lbl">周六</div>
+              </div>
+              <div class="day-col">
+                <div class="day-fill" style="height:18%;opacity:.4"></div>
+                <div class="day-lbl">周日</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /v-app -->
+
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────
+const SCRIPTED = [
+  { role:'ai',  text:'今天过得怎么样？', temp:3 },
+  { role:'usr', text:'有点焦虑，但说不清楚在焦虑什么', temp:5 },
+  { role:'ai',  text:'焦虑又说不清楚来源——这种感觉很常见。\n\n先帮你定位一下，身体上有什么感觉？比如胸口紧、肩膀沉、还是别的地方？', temp:5 },
+  { role:'usr', text:'肩膀很沉', temp:5 },
+  { role:'ai',  text:'肩膀沉。那个重量，好像在替你扛着什么。\n\n你现在愿意放下手边的事，就专注在这里几分钟吗？', temp:4 },
+];
+
+const POOL = [
+  '我在听。能多说一点吗？',
+  '这个感觉，是从什么时候开始的？',
+  '身体上还有什么反应吗？',
+  '如果用一个词来描述现在的状态，会是什么？',
+  '你刚才用了"但是"——那个转折后面，是什么？',
+  '最重的那一个，是哪件事？',
+  '听起来你在努力撑着很多东西。\n\n有没有一件事，可以先放下来？',
+];
+
+const EMO_MAP = {
+  1:'非常平静', 2:'平静', 3:'微微波动', 4:'微焦虑',
+  5:'焦虑', 6:'有些焦虑', 7:'情绪较强', 8:'情绪高涨',
+  9:'情绪风暴', 10:'情绪风暴'
+};
+
+const HM_DATA = [
+  .1,.3,.5,.4,.6,.8,.3,.2,
+  .4,.7,.5,.3,.6,.9,.4,.2,
+  .5,.4,.7,.5,.3,.6,.8,.4,
+  .3,.5,.4,.6
+];
+
+let chatTemp = 3;
+let poolIdx  = 0;
+
+// ── INIT ─────────────────────────────────────────────────────────────
+function init() {
+  buildHeatmap();
+  renderEmoBar(chatTemp);
+  loadScript();
+}
+
+function buildHeatmap() {
+  const g = document.getElementById('hmGrid');
+  HM_DATA.forEach(v => {
+    const c = document.createElement('div');
+    c.className = 'hm-cell';
+    const a = 0.12 + v * 0.72;
+    c.style.background = `rgba(94,133,160,${a.toFixed(2)})`;
+    g.appendChild(c);
+  });
+}
+
+function renderEmoBar(t) {
+  const segs = document.getElementById('emoSegs');
+  segs.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const s = document.createElement('div');
+    s.className = 'emo-seg' + (i <= t ? ' lit' : '');
+    segs.appendChild(s);
+  }
+  const n = Math.max(1, Math.min(10, Math.round(t)));
+  document.getElementById('emoStatus').textContent = `${t} / 10  ·  ${EMO_MAP[n]}`;
+}
+
+// ── SCRIPTED CHAT ─────────────────────────────────────────────────────
+function loadScript() {
+  let delay = 400;
+  SCRIPTED.forEach((m, i) => {
+    if (m.role === 'ai' && i > 0) {
+      // show typing bubble, then replace with message
+      setTimeout(() => showTyping(), delay);
+      delay += 900;
+      setTimeout(() => {
+        removeTyping();
+        appendMsg(m.role, m.text);
+        chatTemp = m.temp;
+        renderEmoBar(chatTemp);
+      }, delay);
+      delay += 500;
+    } else {
+      setTimeout(() => {
+        appendMsg(m.role, m.text);
+        chatTemp = m.temp;
+        renderEmoBar(chatTemp);
+      }, delay);
+      delay += 700;
+    }
+  });
+}
+
+// ── CHAT HELPERS ──────────────────────────────────────────────────────
+function now() {
+  const d = new Date();
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function appendMsg(role, text) {
+  const wrap = document.getElementById('chatMsgs');
+  const div = document.createElement('div');
+  div.className = `msg msg-${role}`;
+  const lines = text.split('\n').map(l => l ? `<p style="margin:0 0 2px">${l}</p>` : '<br>').join('');
+  div.innerHTML = `<div class="msg-bubble">${lines}</div><div class="msg-time">${now()}</div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function showTyping() {
+  const wrap = document.getElementById('chatMsgs');
+  const div = document.createElement('div');
+  div.id = 'typing';
+  div.className = 'msg msg-ai';
+  div.innerHTML = `<div class="typing">
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+  </div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing');
+  if (el) el.remove();
+}
+
+// ── SEND ──────────────────────────────────────────────────────────────
+function send() {
+  const ta = document.getElementById('chatTa');
+  const txt = ta.value.trim();
+  if (!txt) return;
+
+  appendMsg('usr', txt);
+  ta.value = '';
+  ta.style.height = 'auto';
+
+  // nudge temp
+  const delta = (Math.random() - 0.4) * 1.5;
+  chatTemp = Math.min(10, Math.max(1, parseFloat((chatTemp + delta).toFixed(1))));
+  renderEmoBar(chatTemp);
+
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const reply = POOL[poolIdx % POOL.length];
+    poolIdx++;
+    appendMsg('ai', reply);
+  }, 900 + Math.random() * 500);
+}
+
+function onKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────
+function goChat() {
+  document.getElementById('v-onboard').classList.remove('active');
+  document.getElementById('v-app').classList.add('active');
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('p-' + name).classList.add('on');
+  document.querySelectorAll('.sb-nav-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ── TIMELINE TOGGLE ───────────────────────────────────────────────────
+function toggleTl(entry) {
+  const card = entry.querySelector('.tl-card');
+  card.classList.toggle('open');
+}
+
+// ── START ─────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
