@@ -4,7 +4,7 @@
  * 流式 AI 对话代理。将客户端消息转发至 302.ai（Claude Sonnet 4.6），
  * 并将 SSE 流直接透传回客户端，避免整包等待。
  *
- * - API Key 从 .env.local 读取（NEXT_PUBLIC_302AI_KEY）
+ * - API Key 从 .env.local 读取（API_302_KEY，服务端专用，不带 NEXT_PUBLIC_ 前缀以免打进浏览器包）
  * - 系统提示固定为"长河"角色，引导用户觉察情绪
  * - max_tokens: 400 保持回复简短有力
  */
@@ -19,7 +19,7 @@ const SYSTEM_PROMPT = `你是"长河"，一个温柔、富有洞察力的AI生�
 每次回复不超过100字，简短但有分量。`;
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.NEXT_PUBLIC_302AI_KEY;
+  const apiKey = process.env.API_302_KEY;
   if (!apiKey || apiKey === "your-302ai-key-here") {
     return NextResponse.json({ error: "302.ai API key not configured" }, { status: 500 });
   }

@@ -70,7 +70,7 @@ npm install
 
 # 配置环境变量（仅首次）
 cp .env.local.example .env.local   # 如无 example，直接编辑 .env.local
-# 填入：NEXT_PUBLIC_302AI_KEY=your-302ai-key-here
+# 填入：API_302_KEY=your-302ai-key-here
 
 # 启动开发服务器
 npm run dev
@@ -90,7 +90,7 @@ npm run dev
 
 ```bash
 # .env.local
-NEXT_PUBLIC_302AI_KEY=sk-xxx   # 302.ai 统一 API Key（必填，用于长河对话）
+API_302_KEY=sk-xxx   # 302.ai 统一 API Key（必填，用于长河对话）
 ```
 
 > API Key 在 https://302.ai 控制台获取。
@@ -305,7 +305,7 @@ scp -i "/Users/mulan/Downloads/轻量云 SSH 密钥.pem" \
 ssh -i "/Users/mulan/Downloads/轻量云 SSH 密钥.pem" ubuntu@43.160.238.189
 cat ~/YourLifeStory/.env.local
 # 如果为空或不存在：
-echo "NEXT_PUBLIC_302AI_KEY=sk-你的key" > ~/YourLifeStory/.env.local
+echo "API_302_KEY=sk-你的key" > ~/YourLifeStory/.env.local
 pm2 restart your-life-story
 ```
 

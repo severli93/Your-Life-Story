@@ -107,7 +107,7 @@ Response: text/event-stream (SSE)
 4. 透传 SSE 流到客户端
 
 **API Key 管理：**
-- 服务端：`process.env.NEXT_PUBLIC_302AI_KEY`（写在 `.env.local`）
+- 服务端：`process.env.API_302_KEY`（写在 `.env.local`）
 - 客户端设置：存于 `localStorage`（键 `lc_settings`），通过 `CreateSection` 收集
 - **绝对不预填硬编码 key**；除非是用户本人存过的本地缓存
 
@@ -221,7 +221,7 @@ npx tsc --noEmit
 npm run build
 
 # 必需环境变量（.env.local）
-NEXT_PUBLIC_302AI_KEY=your-302ai-key-here
+API_302_KEY=your-302ai-key-here
 ```
 
 **.env.local 不进 git**（已在 .gitignore 中）。
