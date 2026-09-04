@@ -1,17 +1,27 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { withBase } from "@/lib/basePath";
+
+// One theme per story: the veteran's page gets the piano-and-strings piece,
+// the baby-growth page a lighter one. Both generated with Suno (via kie.ai).
+function themeFor(pathname: string): string {
+    return pathname.startsWith("/story/baby-growth")
+        ? withBase("/assets/audio/baby-theme.mp3")
+        : withBase("/assets/audio/gao-theme.mp3");
+}
 
 export default function MusicToggle() {
     const [on, setOn] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const pathname = usePathname();
 
     useEffect(() => {
         // initialize audio
         // Self-hosted theme first (loads without外网); fall back to the Suno CDN
         // track (Peaceful Serenity by @blendfactor) if the local file is missing.
-        const audio = new Audio(withBase("/assets/audio/gao-theme.mp3"));
+        const audio = new Audio(themeFor(pathname));
         audio.onerror = () => {
             audio.onerror = null;
             audio.src = "https://cdn1.suno.ai/74ad1d6e-7d17-4530-afa0-b3df47f1ee89.mp3";
@@ -33,6 +43,17 @@ export default function MusicToggle() {
             }
         };
     }, []);
+
+    // Route change → swap the track, preserving play state.
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+        const next = themeFor(pathname);
+        if (audio.src.endsWith(next)) return;
+        const wasPlaying = !audio.paused;
+        audio.src = next;
+        if (wasPlaying) audio.play().catch(() => {});
+    }, [pathname]);
 
     const toggle = async () => {
         if (!audioRef.current) return;
